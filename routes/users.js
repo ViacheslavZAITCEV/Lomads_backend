@@ -24,23 +24,42 @@ router.get('/', function(req, res, next) {
 
 
 /* -----------------  */
-/* GET users sign-in. */
-router.post('/sign-in', async function(req, res, next) {
+/* GET users/sign-up. */
+router.post('/sign-up', async function(req, res, next) {
 
-  console.log('Route sign in');
+  console.log('Route sign up');
   login = req.body.login;
-  console.log('login = ', login);
+  // console.log('login = ', login);
+  // console.log('req.body = ', req.body);
 
   var response = {response : false};
 
-  if ( await getUserLogin(login) != 0){
+  // on cherche email dans la Base de données
+  var test = await getUserLogin(login)
+  console.log('test=', test);
+  if ( test != null){
     response.error = 'login is used';
 
   } else {
 
+    //creation une compte nouvelle
     var newUser = await createUser(req);
     if( newUser.status){
-      response.user = newUser.user;
+
+      // on prepare la reponse pour frontend
+      response.response = true;
+      response.token = newUser.token;
+      response.nom = newUser.nom;
+      response.prenom =  newUser.prenom;
+      response.avatar = newUser.avatar;
+      response.ville  = newUser.ville;
+      response.preferences  = newUser.preferences;
+      response.groupes  = newUser.groupes;
+      response.eventsFavoris  = newUser.favoris;
+      response.sorties  = newUser.sorties;
+      response.amis  = newUser.amis;
+      response.confidentialite  = newUser.confidentialite;
+      response.age = newUser.age;
     }else{
       response.error = 'error of BD: ' + newUser.error;
     }
@@ -53,7 +72,46 @@ router.post('/sign-in', async function(req, res, next) {
 
 
 /* -----------------  */
-/* GET users sign-up. */
+/* GET users sign-in. */
+
+router.post('/sign-in', async function(req, res, next) {
+
+  console.log('Route sign in');
+  login = req.body.login;
+  console.log('login = ', login);
+
+  var response = {response : false};
+
+  var newUser = await getUserLogin(login)
+  console.log('user=', newUser);
+
+  if ( newUser == null ){
+    response.error = 'login does not exist';
+
+  } else if (req.body.password === newUser.SHA256(req.body.password + req.body.salt).toString(encBase64) ) {
+
+    if( newUser.status){
+      response.response = true;
+      response.token = '';
+      response.nom = newUser.nom;
+      response.prenom =  newUser.prenom;
+      response.avatar = newUser.avatar;
+      response.ville  = newUser.ville;
+      response.preferences  = newUser.preferences;
+      response.groupes  = newUser.groupes;
+      response.eventsFavoris  = newUser.favoris;
+      response.sorties  = newUser.sorties;
+      response.amis  = newUser.amis;
+      response.confidentialite  = newUser.confidentialite;
+      response.age = newUser.age;
+      response.token = newUser.token;
+    }else{
+      response.error = 'error of BD: ' + newUser.error;
+    }
+  }
+  
+  res.json(response);
+});
 
 
 
@@ -68,7 +126,7 @@ router.post('/sign-in', async function(req, res, next) {
 
 async function getUserLogin(email){
   var reponse;
-  reponse = users.find({email});
+  reponse = users.findOne({email});
   return reponse;
 }
 
@@ -89,7 +147,7 @@ async function createUser(req){
     amis : [],
     groupes : [],
     conversations : [],
-    avatarpreferences : '',
+    preferences : '',
     confidentialite : '',
     favoris : [],
     sorties : [],

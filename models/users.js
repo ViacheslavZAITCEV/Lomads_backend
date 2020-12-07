@@ -1,12 +1,24 @@
-// var mongoose = require('./connection')
+const mongoose = require("./connection");
 
-// var userSchema = mongoose.Schema({
-//     name: String,
-//     firstname: String,
-//     email: String,
-//     password: String,
-// })
+const user = {
+    salt : Number,
+    token : String,
+    nom : String,
+    prenom : String,
+    email : String,
+    password : String,
+    avatar : String,
+    ville : String,
+    age : Number,
+    amis : Array,
+    groupes : Array,
+    conversations : Array,
+    preferences : String,
+    confidentialite : String,
+    favoris : Array,
+    sorties : Array,
+}
 
-// var userModel = mongoose.model('users', userSchema)
+var users = mongoose.model('users', mongoose.Schema(user));
 
-// module.exports = userModel;
+module.exports = users;
