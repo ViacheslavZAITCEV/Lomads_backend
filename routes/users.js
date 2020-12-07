@@ -24,26 +24,27 @@ router.get('/', function(req, res, next) {
 
 
 /* -----------------  */
-/* GET users/sign-up. */
+/* GET users/sign-up. = s'inscrire */
 router.post('/sign-up', async function(req, res, next) {
 
   console.log('Route sign up');
-  login = req.body.login;
+  email = req.body.email.toLowerCase();
   // console.log('login = ', login);
   // console.log('req.body = ', req.body);
 
   var response = {response : false};
 
   // on cherche email dans la Base de données
-  var test = await getUser({login})
+  var test = await getUser({email})
   console.log('test=', test);
   if ( test != null){
-    response.error = 'login is used';
+    response.error = 'email is used';
 
   } else {
 
     //creation une compte nouvelle
-    var newUser = await createUser(req);
+    var newUser = await createUser(req.body);
+    console.log(newUser);
     if( newUser.status){
 
       // on prepare la reponse pour frontend
@@ -72,27 +73,26 @@ router.post('/sign-up', async function(req, res, next) {
 
 
 /* -----------------  */
-/* GET users sign-in. */
+/* POST /users/sign-in (se loguer)*/
 
 router.post('/sign-in', async function(req, res, next) {
 
   console.log('Route sign in');
-  login = req.body.login;
-  console.log('login = ', login);
+  email = req.body.email.toLowerCase();
+  console.log('email = ', email);
 
   var response = {response : false};
 
-  var newUser = await getUser({login})
+  var newUser = await getUser({email})
   console.log('user=', newUser);
 
   if ( newUser == null ){
     response.error = 'login does not exist';
 
-  } else if (req.body.password === newUser.SHA256(req.body.password + req.body.salt).toString(encBase64) ) {
+  } else if (newUser.password === SHA256(req.body.password + newUser.salt).toString(encBase64) ) {
 
-    if( newUser.status){
       response.response = true;
-      response.token = '';
+      response.token = newUser.token;
       response.nom = newUser.nom;
       response.prenom =  newUser.prenom;
       response.avatar = newUser.avatar;
@@ -106,9 +106,8 @@ router.post('/sign-in', async function(req, res, next) {
       response.age = newUser.age;
       response.token = newUser.token;
     }else{
-      response.error = 'error of BD: ' + newUser.error;
+      response.error = 'wrong password';
     }
-  }
   
   res.json(response);
 });
@@ -124,23 +123,77 @@ router.post('/update', async function(req, res, next) {
   console.log('Route update');
   token = req.body.token;
   console.log('token = ', token);
-  
-  var oldUser = await getUser({token})
-  var updetedUser = await updateUser(oldUser , req.body);
-
   var response = {response : false};
-  var resBD = await updateUserByToken(token, updetedUser);
+  
+  var oldUser = await getUser({token});
+  if (oldUser === null){
+    response.error = 'wrong token';
+  } else {
 
-  if ( ! resBD.status ){
-    response.error = resBD;
-  }else{
-    response.response = true;
-    response.token = token;
+    var updetedUser = await updateUser(oldUser , req.body);
+    console.log('updetedUser=', updetedUser)
+
+    var resBD = await updateUserByToken(token, updetedUser);
+    console.log("resBD=", resBD);
+
+    if ( ! resBD.status ){
+      response.error = resBD;
+    }else{
+      response.response = true;
+      response.token = token;
+    }
   }
   res.json(response);
 });
 
 
+
+
+/* -----------------  */
+/* GET users/delete   */
+router.post('/delete', async function(req, res, next) {
+
+  console.log('Route delete');
+  token = req.body.token;
+  console.log('token = ', token);
+  
+  var response = {response : false};
+  
+  var appDelUser = deleteUserFromApp (await getUser({token}));
+  
+  if( ! appDelUser) {
+    console.log("can't delete the user. Email= ", req.body.email);
+    response.error = "Backend can't delete the user"
+  } else{ 
+  
+    var resBD = await deleteOne(token);
+    
+    if ( ! resBD.status ){
+      response.error = resBD;
+    }else{
+      response.response = true;
+      response.token = token;
+    }
+  }
+  res.json(response);
+});
+
+
+
+
+/* -----------------  */
+/* GET users/getAvatars   */
+router.post('/getAvatars', async function(req, res, next) {
+
+  console.log('Route getAvatars');
+  token = req.body.token;
+  console.log('token = ', token);
+  
+  var response = {response : false};
+
+
+  res.json(response);
+});
 
 
 
@@ -162,10 +215,21 @@ async function getUser(obj){
   return reponse;
 }
 
-async function updateUserByToken(token, updateddUser){
+async function updateUserByToken(token, updatedUser){
   var reponse = {status : false};
   try{
-    reponse.user = users.updateOne({token}, updateddUser);
+    reponse.user = await users.updateOne({token}, updatedUser);
+    reponse.status = true;
+  }catch(e){
+    console.log(e);
+    reponse.error = e;
+  }
+  return reponse;
+}
+async function deleteOne(token){
+  var reponse = {status : false};
+  try{
+    reponse.user = users.deleteOne({token});
     reponse.status = true;
   }catch(e){
     console.log(e);
@@ -174,19 +238,19 @@ async function updateUserByToken(token, updateddUser){
   return reponse;
 }
 
-async function createUser(req){
+async function createUser(obj){
 
   var salt = uid2(32);
-  var newUser = {
+  var newUser = new users ({
     salt : salt,
     token : uid2(32),
-    nom : req.body.nom,
-    prenom : req.body.prenom,
-    email : req.body.email,
-    password : SHA256(req.body.password + req.body.salt).toString(encBase64),
-    avatar : '',
-    ville : req.body.ville,
-    age : req.body.age,
+    nom : obj.nom,
+    prenom : obj.prenom,
+    email : obj.email.toLowerCase(),
+    password : SHA256(obj.password + salt).toString(encBase64),
+    avatar : obj.avatar,
+    ville : obj.ville,
+    age : obj.age,
     amis : [],
     groupes : [],
     conversations : [],
@@ -194,9 +258,9 @@ async function createUser(req){
     confidentialite : '',
     favoris : [],
     sorties : [],
-  };
+  });
 
-  var response;
+  var response = {};
   try{
     response.status = true;
     response.user = await newUser.save();
@@ -210,6 +274,7 @@ async function createUser(req){
 
 
 function updateUser(userUpdated, data){
+  console.log(data);
   if (data.nom != null){
     userUpdated.nom = data.nom;
   }
@@ -217,10 +282,10 @@ function updateUser(userUpdated, data){
     userUpdated.prenom = data.prenom;
   }
   if (data.email != null){
-    userUpdated.email = data.email;
+    userUpdated.email = data.email.toLowerCase();
   }
   if (data.password != null){
-    userUpdated.password = data.password;
+    userUpdated.password = SHA256(data.password + data.salt).toString(encBase64)
   }
   if (data.avatar != null){
     userUpdated.avatar = data.avatar;
@@ -247,6 +312,17 @@ function updateUser(userUpdated, data){
     userUpdated.sorties = data.sorties;
   }
   return userUpdated;
+}
+
+
+function deleteUserFromApp (user){
+  var result = false;
+  console.log('delete user from App');
+  //
+  // instrutions pour supprimer les traces de l'utilisateur 'user'
+  // il faut discouter dans l'equipe
+  //
+  return result;
 }
 
 

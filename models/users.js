@@ -1,7 +1,7 @@
 const mongoose = require("./connection");
 
 const user = {
-    salt : Number,
+    salt : String,
     token : String,
     nom : String,
     prenom : String,
