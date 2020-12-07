@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 var mongoose = require('./connection')
 
 var userSchema = mongoose.Schema({
@@ -26,11 +24,11 @@ var userSchema = mongoose.Schema({
 var userModel = mongoose.model('users', userSchema)
 
 module.exports = userModel;
-=======
+
 // var mongoose = require('./connection')
-=======
+
 const mongoose = require("./connection");
->>>>>>> e939ebaa4c779903075b463dd7583873deb40dd0
+// e939ebaa4c779903075b463dd7583873deb40dd0
 
 const user = {
     salt : String,
@@ -53,9 +51,9 @@ const user = {
 
 var users = mongoose.model('users', mongoose.Schema(user));
 
-<<<<<<< HEAD
+// HEAD
 // module.exports = userModel;
->>>>>>> 404648db91dfcc2c85cdd28a8a44ea9ac04731e9
-=======
+// 404648db91dfcc2c85cdd28a8a44ea9ac04731e9
+
 module.exports = users;
->>>>>>> e939ebaa4c779903075b463dd7583873deb40dd0
+// e939ebaa4c779903075b463dd7583873deb40dd0
