@@ -35,7 +35,7 @@ router.post('/sign-up', async function(req, res, next) {
   var response = {response : false};
 
   // on cherche email dans la Base de données
-  var test = await getUserLogin(login)
+  var test = await getUser({login})
   console.log('test=', test);
   if ( test != null){
     response.error = 'login is used';
@@ -82,7 +82,7 @@ router.post('/sign-in', async function(req, res, next) {
 
   var response = {response : false};
 
-  var newUser = await getUserLogin(login)
+  var newUser = await getUser({login})
   console.log('user=', newUser);
 
   if ( newUser == null ){
@@ -117,6 +117,33 @@ router.post('/sign-in', async function(req, res, next) {
 
 
 
+/* -----------------  */
+/* GET users/update   */
+router.post('/update', async function(req, res, next) {
+
+  console.log('Route update');
+  token = req.body.token;
+  console.log('token = ', token);
+  
+  var oldUser = await getUser({token})
+  var updetedUser = await updateUser(oldUser , req.body);
+
+  var response = {response : false};
+  var resBD = await updateUserByToken(token, updetedUser);
+
+  if ( ! resBD.status ){
+    response.error = resBD;
+  }else{
+    response.response = true;
+    response.token = token;
+  }
+  res.json(response);
+});
+
+
+
+
+
 //--------------------------------------------------
 //
 //          - = FUNCTIONS = -
@@ -124,12 +151,28 @@ router.post('/sign-in', async function(req, res, next) {
 //--------------------------------------------------
 // *************************************************
 
-async function getUserLogin(email){
+async function getUser(obj){
   var reponse;
-  reponse = users.findOne({email});
+  try{
+    reponse = users.findOne(obj);
+  }catch(e){
+    console.log(e);
+    reponse = e;
+  }
   return reponse;
 }
 
+async function updateUserByToken(token, updateddUser){
+  var reponse = {status : false};
+  try{
+    reponse.user = users.updateOne({token}, updateddUser);
+    reponse.status = true;
+  }catch(e){
+    console.log(e);
+    reponse.error = e;
+  }
+  return reponse;
+}
 
 async function createUser(req){
 
@@ -164,5 +207,48 @@ async function createUser(req){
   }
   return response;
 }
+
+
+function updateUser(userUpdated, data){
+  if (data.nom != null){
+    userUpdated.nom = data.nom;
+  }
+  if (data.prenom != null){
+    userUpdated.prenom = data.prenom;
+  }
+  if (data.email != null){
+    userUpdated.email = data.email;
+  }
+  if (data.password != null){
+    userUpdated.password = data.password;
+  }
+  if (data.avatar != null){
+    userUpdated.avatar = data.avatar;
+  }
+  if (data.ville != null){
+    userUpdated.ville = data.ville;
+  }
+  if (data.age != null){
+    userUpdated.age = data.age;
+  }
+  if (data.preferences != null){
+    userUpdated.preferences = data.preferences;
+  }
+  if (data.groupes != null){
+    userUpdated.groupes = data.groupes;
+  }
+  if (data.confidentialite != null){
+    userUpdated.confidentialite = data.confidentialite;
+  }
+  if (data.favoris != null){
+    userUpdated.favoris = data.favoris;
+  }
+  if (data.sorties != null){
+    userUpdated.sorties = data.sorties;
+  }
+  return userUpdated;
+}
+
+
 
 module.exports = router;
