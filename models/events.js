@@ -8,7 +8,6 @@ var lieuxDatesSchema = mongoose.Schema({
     date_debut: Date,
     date_fin: Date,
     duree: Number,
-
 })
 
 

@@ -11,11 +11,13 @@ var userSchema = mongoose.Schema({
     avatar: String,
     date_de_naissance : Date,
     amis: [String],
+    // REVOIR A UN MOMENT LES PREFERENCES POUR FAIRE UN TABLEAU D'OBJETS
+    // ex :  updated: { type: Date, default: Date.now },
     preferences: [String],
     confidentialite: Boolean,
     favoris: [{ type: mongoose.Schema.Types.ObjectId, ref: 'events' }],
-    sorties : [{ type: mongoose.Schema.Types.ObjectId, ref: 'sorties' }],
-    groupes_amis:[{ type: mongoose.Schema.Types.ObjectId, ref: 'friends' }],
+    // sorties : [{ type: mongoose.Schema.Types.ObjectId, ref: 'sorties' }],
+    // groupes_amis:[{ type: mongoose.Schema.Types.ObjectId, ref: 'friends' }],
     // conversations:[{ type: mongoose.Schema.Types.ObjectId, ref: 'conversations' }]
 })
 
