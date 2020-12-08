@@ -38,42 +38,46 @@ router.get('/', function(req, res, next) {
 router.post('/sign-up', async function(req, res, next) {
 
   console.log('Route sign up');
-  var email = req.body.email.toLowerCase();
-  // console.log('login = ', login);
-  // console.log('req.body = ', req.body);
-
   var response = {response : false};
+  var emailRef =  req.body.email;
+  console.log(emailRef);
+  if (emailRef == null || emailRef == undefined){
+    response.error = 'email is null or undefined';
+  }else{
+  
+    var email = emailRef.toLowerCase();
 
-  // on cherche email dans la Base de données
-  var test = await getUser({email})
-  console.log('test=', test);
-  if ( test != null){
-    response.error = 'email is used';
+    // on cherche email dans la Base de données
+    var test = await getUser({email})
+    console.log('test=', test);
+    if ( test != null){
+      response.error = 'email is used';
 
-  } else {
+    } else {
 
-    //creation une compte nouvelle
-    var newUser = await createUser(req.body);
-    console.log('newUser =', newUser);
-    
-    if( newUser.status){
+      //creation une compte nouvelle
+      var newUser = await createUser(req.body);
+      console.log('newUser =', newUser);
+      
+      if( newUser.status){
 
-      // on prepare la reponse pour frontend
-      response.response = true;
-      response.token = newUser.user.token;
-      response.nom = newUser.user.nom;
-      response.prenom =  newUser.user.prenom;
-      response.avatar = newUser.user.avatar;
-      response.ville  = newUser.user.ville;
-      response.preferences  = newUser.user.preferences;
-      response.groupes  = newUser.user.groupes;
-      response.eventsFavoris  = newUser.user.favoris;
-      response.sorties  = newUser.user.sorties;
-      response.amis  = newUser.user.amis;
-      response.confidentialite  = newUser.user.confidentialite;
-      response.age = newUser.user.age;
-    }else{
-      response.error = 'error of BD: ' + newUser.error;
+        // on prepare la reponse pour frontend
+        response.response = true;
+        response.token = newUser.user.token;
+        response.nom = newUser.user.nom;
+        response.prenom =  newUser.user.prenom;
+        response.avatar = newUser.user.avatar;
+        response.ville  = newUser.user.ville;
+        response.preferences  = newUser.user.preferences;
+        response.groupes  = newUser.user.groupes;
+        response.eventsFavoris  = newUser.user.favoris;
+        response.sorties  = newUser.user.sorties;
+        response.amis  = newUser.user.amis;
+        response.confidentialite  = newUser.user.confidentialite;
+        response.age = newUser.user.age;
+      }else{
+        response.error = 'error of BD: ' + newUser.error;
+      }
     }
   }
   console.log('response =', response);
@@ -89,37 +93,40 @@ router.post('/sign-up', async function(req, res, next) {
 router.post('/sign-in', async function(req, res, next) {
 
   console.log('Route sign in');
-  var email = req.body.email.toLowerCase();
-  console.log('email = ', email);
-
   var response = {response : false};
+  var emailRef =  req.body.email;
+  console.log(emailRef);
+  if (emailRef == null || emailRef == undefined){
+    response.error = 'email is null or undefined';
+  }else{
+    var email = req.body.email.toLowerCase();
+    console.log('email = ', email);
+    var userBD = await getUser({email})
+    console.log('user=', userBD);
 
-  var newUser = await getUser({email})
-  console.log('user=', newUser);
+    if ( userBD == null ){
+      response.error = 'email does not exist';
 
-  if ( newUser == null ){
-    response.error = 'login does not exist';
-
-  } else if (newUser.password === SHA256(req.body.password + newUser.salt).toString(encBase64) ) {
-
-      response.response = true;
-      response.token = newUser.token;
-      response.nom = newUser.nom;
-      response.prenom =  newUser.prenom;
-      response.avatar = newUser.avatar;
-      response.ville  = newUser.ville;
-      response.preferences  = newUser.preferences;
-      response.groupes  = newUser.groupes;
-      response.eventsFavoris  = newUser.favoris;
-      response.sorties  = newUser.sorties;
-      response.amis  = newUser.amis;
-      response.confidentialite  = newUser.confidentialite;
-      response.age = newUser.age;
-      response.token = newUser.token;
-    }else{
-      response.error = 'wrong password';
+    } else if (userBD.mot_de_passe === SHA256(req.body.password + userBD.salt).toString(encBase64) ) {
+      // password : SHA256(obj.password + salt).toString(encBase64),
+        response.response = true;
+        response.token = userBD.token;
+        response.nom = userBD.nom;
+        response.prenom =  userBD.prenom;
+        response.avatar = userBD.avatar;
+        response.ville  = userBD.ville;
+        response.preferences  = userBD.preferences;
+        response.groupes  = userBD.groupes;
+        response.eventsFavoris  = userBD.favoris;
+        response.sorties  = userBD.sorties;
+        response.amis  = userBD.amis;
+        response.confidentialite  = userBD.confidentialite;
+        response.age = userBD.age;
+        response.token = userBD.token;
+      }else{
+        response.error = 'wrong password';
+      }
     }
-  
   res.json(response);
 });
 
@@ -262,18 +269,7 @@ router.get('/renderUsersAleatoires', async function(req, res, next) {
   function render(max){
     return Math.floor(Math.random()*max);
   }
-  function getUrlCloud(path){
-    var saveCloudRes;
-    console.log('save to Cloudinary file='+path);
-    console.log(path)
-    cloudinary.uploader.upload(path, 
-      function (error, result) {
-        saveCloudRes = result;
-        console.log('error : ', error);
-        console.log('saved to Cloudinary', saveCloudRes)
-        return saveCloudRes;
-    }); 
-  }
+
 
   res.json(result);
 });
@@ -339,7 +335,7 @@ async function createUser(obj){
     groupes : [],
     conversations : [],
     preferences : '',
-    confidentialite : '',
+    confidentialite : true,
     favoris : [],
     sorties : [],
   });
@@ -387,7 +383,7 @@ function updateUser(userUpdated, data){
     userUpdated.groupes = data.groupes;
   }
   if (data.confidentialite != null){
-    userUpdated.confidentialite = data.confidentialite.toLowerCase();
+    userUpdated.confidentialite = data.confidentialite;
   }
   if (data.favoris != null){
     userUpdated.favoris = data.favoris;
@@ -396,6 +392,19 @@ function updateUser(userUpdated, data){
     userUpdated.sorties = data.sorties;
   }
   return userUpdated;
+}
+
+function getUrlCloud(path){
+  var saveCloudRes;
+  console.log('save to Cloudinary file='+path);
+  console.log(path)
+  cloudinary.uploader.upload(path, 
+    function (error, result) {
+      saveCloudRes = result;
+      console.log('error : ', error);
+      console.log('saved to Cloudinary', saveCloudRes)
+      return saveCloudRes;
+  }); 
 }
 
 
