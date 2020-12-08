@@ -415,7 +415,36 @@ function deleteUserFromApp (user){
   // instrutions pour supprimer les traces de l'utilisateur 'user'
   // il faut discouter dans l'equipe
 
-  // delFrend
+  //  ****************************
+  // console.log("event",req.query.idEvent)
+  // console.log("user",req.query.idUser)
+
+  // var idEvent = req.query.idEvent;
+  // var idUser = req.query.idUser
+
+  // eventModel.findOneAndUpdate(
+  //   { _id: idEvent }, 
+  //   { $pull: {popularite: idUser}},
+  //     function (error, success) {
+  //       if (error) {
+  //           console.log("ERROR EVENT",error);
+  //       } else {
+  //           console.log("SUCCESS EVENT", success);
+  //       }
+  //   });
+  // *******************************
+  
+  for (var ami of user.ami){
+    users.update({'id' : ami.id}, {$pull : {amis : user.id}});
+  }
+
+  
+  // delFrends from mes Amis
+
+  // users.findOne(
+  //   {"_id" : user._id}, // filter de recherche 
+  //   { }
+  //   )
 
   //
   // retirer user des conversation suivantes: user.conversations[]
