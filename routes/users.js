@@ -102,7 +102,7 @@ router.post('/sign-in', async function(req, res, next) {
     var email = req.body.email.toLowerCase();
     console.log('email = ', email);
     var userBD = await getUser({email})
-    console.log('user=', userBD);
+    console.log('userBD=', userBD);
 
     if ( userBD == null ){
       response.error = 'email does not exist';
@@ -327,7 +327,7 @@ async function createUser(obj){
     nom : obj.nom,
     prenom : obj.prenom,
     email : obj.email.toLowerCase(),
-    password : SHA256(obj.password + salt).toString(encBase64),
+    mot_de_passe : SHA256(obj.password + salt).toString(encBase64),
     avatar : obj.avatar,
     ville : obj.ville,
     age : obj.age,
@@ -414,6 +414,9 @@ function deleteUserFromApp (user){
   //
   // instrutions pour supprimer les traces de l'utilisateur 'user'
   // il faut discouter dans l'equipe
+
+  // delFrend
+
   //
   // retirer user des conversation suivantes: user.conversations[]
   // retirer user des amis suivantes: user.amis[]
