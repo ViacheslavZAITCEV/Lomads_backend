@@ -237,8 +237,8 @@ router.get('/renderUsersAleatoires', async function(req, res, next) {
 
   var result = [];
   var compt = 0;
-  // var path = '../../../inTouch/public/images/avatars/'
-  var path = './routes/avatars/'
+  var path = '../../inTouch/public/images/avatars/'
+  // var path = './routes/avatars/'
   while (compt < qtte) {
 
     // profil masculin
