@@ -4,7 +4,17 @@ var router = express.Router();
 var uid2 = require('uid2');
 var SHA256 = require('crypto-js/sha256');
 var encBase64 = require('crypto-js/enc-base64');
+
+var cloudinary = require('cloudinary').v2;
+
+cloudinary.config({ 
+  cloud_name: 'dhtl1axxt', 
+  api_key: '793539215191737', 
+  api_secret: 'uY4c6T5Cg0MfWEZ-gB7gSryDxuU' 
+});
+
 var users = require('../models/users');
+const { render } = require('ejs');
 
 
 
@@ -28,7 +38,7 @@ router.get('/', function(req, res, next) {
 router.post('/sign-up', async function(req, res, next) {
 
   console.log('Route sign up');
-  email = req.body.email.toLowerCase();
+  var email = req.body.email.toLowerCase();
   // console.log('login = ', login);
   // console.log('req.body = ', req.body);
 
@@ -44,28 +54,29 @@ router.post('/sign-up', async function(req, res, next) {
 
     //creation une compte nouvelle
     var newUser = await createUser(req.body);
-    console.log(newUser);
+    console.log('newUser =', newUser);
+    
     if( newUser.status){
 
       // on prepare la reponse pour frontend
       response.response = true;
-      response.token = newUser.token;
-      response.nom = newUser.nom;
-      response.prenom =  newUser.prenom;
-      response.avatar = newUser.avatar;
-      response.ville  = newUser.ville;
-      response.preferences  = newUser.preferences;
-      response.groupes  = newUser.groupes;
-      response.eventsFavoris  = newUser.favoris;
-      response.sorties  = newUser.sorties;
-      response.amis  = newUser.amis;
-      response.confidentialite  = newUser.confidentialite;
-      response.age = newUser.age;
+      response.token = newUser.user.token;
+      response.nom = newUser.user.nom;
+      response.prenom =  newUser.user.prenom;
+      response.avatar = newUser.user.avatar;
+      response.ville  = newUser.user.ville;
+      response.preferences  = newUser.user.preferences;
+      response.groupes  = newUser.user.groupes;
+      response.eventsFavoris  = newUser.user.favoris;
+      response.sorties  = newUser.user.sorties;
+      response.amis  = newUser.user.amis;
+      response.confidentialite  = newUser.user.confidentialite;
+      response.age = newUser.user.age;
     }else{
       response.error = 'error of BD: ' + newUser.error;
     }
   }
-  
+  console.log('response =', response);
   res.json(response);
 });
 
@@ -78,7 +89,7 @@ router.post('/sign-up', async function(req, res, next) {
 router.post('/sign-in', async function(req, res, next) {
 
   console.log('Route sign in');
-  email = req.body.email.toLowerCase();
+  var email = req.body.email.toLowerCase();
   console.log('email = ', email);
 
   var response = {response : false};
@@ -121,7 +132,7 @@ router.post('/sign-in', async function(req, res, next) {
 router.post('/update', async function(req, res, next) {
 
   console.log('Route update');
-  token = req.body.token;
+  var token = req.body.token;
   console.log('token = ', token);
   var response = {response : false};
   
@@ -151,10 +162,10 @@ router.post('/update', async function(req, res, next) {
 
 /* -----------------  */
 /* GET users/delete   */
-router.post('/delete', async function(req, res, next) {
+router.get('/delete', async function(req, res, next) {
 
   console.log('Route delete');
-  token = req.body.token;
+  var token = req.body.token;
   console.log('token = ', token);
   
   var response = {response : false};
@@ -186,7 +197,7 @@ router.post('/delete', async function(req, res, next) {
 router.post('/getAvatars', async function(req, res, next) {
 
   console.log('Route getAvatars');
-  token = req.body.token;
+  var token = req.body.token;
   console.log('token = ', token);
   
   var response = {response : false};
@@ -194,6 +205,79 @@ router.post('/getAvatars', async function(req, res, next) {
 
   res.json(response);
 });
+
+
+
+
+
+/* -----------------  */
+/* GET users/renderUsersAleatoires   */
+router.get('/renderUsersAleatoires', async function(req, res, next) {
+
+  console.log('Route renderUsersAleatoires');
+  var qtte = 0;
+  if (req.query.quantite !== undefined){
+    qtte = req.query.quantite;
+  };
+
+  var villes = ['Paris', 'Marseille', 'Nantes', 'Rouen', 'Havre', 'La Rochelle', 'Toulouse', 'Paris', 'Paris', 'Paris', 'Paris'];
+  var prenomsMasc = ['Pierre', 'Jean-Paul', 'Michel', 'Emmanuel', 'Dominique', 'Nicols', 'Léa', 'Manon', 'Claud', 'Sylvin', 'Beatrice', 'Eduard', 'Antoin', 'Jean'];
+  var prenomsFemin = ['Marie', 'Candice', 'Michelle', 'Emmanuelle', 'Dominique', 'Suzy', 'Claire', 'Alexandra', 'Mylene', 'Melissa', 'Clara', 'Lisa', 'Sonia', 'Raphaelle'];
+  var noms = ['Dupont', 'Dubois', 'Dujardin', 'Dumanoir', 'Dulac', 'Macron', 'Coustaud', 'Custeau', 'Sezane', 'Parmentier', 'Hausman'];
+  var lettres = 'abcdefghijklmnoprstuvwxyz';
+  var avatarMasc = ['001-boy.png', '002-boy.png', '027-boy.png', '028-man.png', '029-boy.png', '031-boy.png', '032-man.png', '033-man.png', '034-boy.png', '035-boy.png', '036-boy.png', '037-man.png', '038-boy.png', '039-boy.png', '040-man.png', '041-boy.png', '042-boy.png', '043-boy.png', '044-boy.png', '045-man.png', '046-man.png', '047-man.png', '048-man.png', '049-boy.png', '050-boy.png'];
+  var avatarFemin = ['003-woman.png', '004-woman.png', '005-woman.png', '006-woman.png', '007-woman.png', '008-woman.png', '009-woman.png', '010-woman.png', '011-woman.png', '012-woman.png', '013-woman.png', '014-woman.png', '015-woman.png', '016-woman.png', '017-woman.png', '018-woman.png', '019-woman.png', '020-woman.png', '021-woman.png', '022-woman.png', '023-woman.png', '024-woman.png', '025-woman.png', '026-woman.png'];
+
+  var result = [];
+  var compt = 0;
+  // var path = '../../../inTouch/public/images/avatars/'
+  var path = './routes/avatars/'
+  while (compt < qtte) {
+
+    // profil masculin
+    var nom =  noms[render(noms.length)];
+    var prenom = prenomsMasc[render(prenomsMasc.length)];
+    var avatar = await getUrlCloud(path + avatarMasc[render(avatarMasc.length)]);
+    var ville = villes[render(villes.length)];
+    var email = lettres.charAt( render( lettres.length )) +  lettres.charAt( render( lettres.length )) + '@gmail.fr'
+    var newUser = await createUser({nom, prenom, avatar, ville, email, password : email});
+    if ( newUser.status ){
+      compt++;
+      result.push(newUser.user);
+    }
+    // profil feminin
+    var nom =  noms[render(noms.length)];
+    var prenom = prenomsFemin[render(prenomsFemin.length)];
+    var avatar = await getUrlCloud(path + avatarFemin[render(avatarFemin.length)]);
+    var ville = villes[render(villes.length)];
+    var email = lettres.charAt( render( lettres.length )) +  lettres.charAt( render( lettres.length )) + '@gmail.fr'
+    var newUser = await createUser({nom, prenom, avatar, ville, email, password : email});
+    if ( newUser.status ){
+      compt++;
+      result.push(newUser.user);
+    }
+    
+  }
+  
+  function render(max){
+    return Math.floor(Math.random()*max);
+  }
+  function getUrlCloud(path){
+    var saveCloudRes;
+    console.log('save to Cloudinary file='+path);
+    console.log(path)
+    cloudinary.uploader.upload(path, 
+      function (error, result) {
+        saveCloudRes = result;
+        console.log('error : ', error);
+        console.log('saved to Cloudinary', saveCloudRes)
+        return saveCloudRes;
+    }); 
+  }
+
+  res.json(result);
+});
+
 
 
 
@@ -297,13 +381,13 @@ function updateUser(userUpdated, data){
     userUpdated.age = data.age;
   }
   if (data.preferences != null){
-    userUpdated.preferences = data.preferences;
+    userUpdated.preferences = data.preferences.toLowerCase();
   }
   if (data.groupes != null){
     userUpdated.groupes = data.groupes;
   }
   if (data.confidentialite != null){
-    userUpdated.confidentialite = data.confidentialite;
+    userUpdated.confidentialite = data.confidentialite.toLowerCase();
   }
   if (data.favoris != null){
     userUpdated.favoris = data.favoris;
@@ -321,6 +405,9 @@ function deleteUserFromApp (user){
   //
   // instrutions pour supprimer les traces de l'utilisateur 'user'
   // il faut discouter dans l'equipe
+  //
+  // retirer user des conversation suivantes: user.conversations[]
+  // retirer user des amis suivantes: user.amis[]
   //
   return result;
 }
