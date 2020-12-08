@@ -1,12 +1,11 @@
-// var mongoose = require('./connection')
+var mongoose = require('./connection')
 
-// var friendSchema = mongoose.Schema({
-//     name: String,
-//     firstname: String,
-//     email: String,
-//     password: String,
-// })
+var friendSchema = mongoose.Schema({
+    createur: String,
+    nom: String,
+    membres: [String],
+})
 
-// var friendModel = mongoose.model('friends', friendSchema)
+var friendModel = mongoose.model('friends', friendSchema)
 
-// module.exports = friendModel;
+module.exports = friendModel;

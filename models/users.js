@@ -32,8 +32,6 @@ var userSchema = mongoose.Schema({
         musiqueRock: Boolean,
         beauxArts : Boolean,
         histoireCivilisations: Boolean,
-
-
     }],
     confidentialite: Boolean,
     favoris: [{ type: mongoose.Schema.Types.ObjectId, ref: 'events' }],
