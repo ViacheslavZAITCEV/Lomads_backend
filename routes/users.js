@@ -434,10 +434,11 @@ function deleteUserFromApp (user){
   //   });
   // *******************************
   
-  for (var ami of user.ami){
-    users.update({'id' : ami.id}, {$pull : {amis : user.id}});
+  if (user !== null){
+    for (var ami of user.amis){
+      users.update({'id' : ami.id}, {$pull : {amis : user.id}});
+    }
   }
-
   
   // delFrends from mes Amis
 
