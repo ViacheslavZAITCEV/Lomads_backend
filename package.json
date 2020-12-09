@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "gowizme-backend",
+=======
+  "name": "backend",
+>>>>>>> 404648db91dfcc2c85cdd28a8a44ea9ac04731e9
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -11,6 +15,10 @@
     "ejs": "~2.6.1",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
+<<<<<<< HEAD
+=======
+    "mongoose": "^5.11.4",
+>>>>>>> 404648db91dfcc2c85cdd28a8a44ea9ac04731e9
     "morgan": "~1.9.1"
   }
 }

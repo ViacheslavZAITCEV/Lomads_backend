@@ -5,7 +5,11 @@
  */
 
 var app = require('../app');
+<<<<<<< HEAD
 var debug = require('debug')('gowizme-backend:server');
+=======
+var debug = require('debug')('backend:server');
+>>>>>>> 404648db91dfcc2c85cdd28a8a44ea9ac04731e9
 var http = require('http');
 
 /**
