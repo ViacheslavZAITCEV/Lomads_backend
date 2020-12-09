@@ -45,8 +45,6 @@ var userModel = mongoose.model('users', userSchema)
 
 module.exports = userModel;
 
-
-
 // VERSION SLAVA
 
 // // var mongoose = require('./connection')
