@@ -370,7 +370,7 @@ async function createUser(obj){
     prenom : obj.prenom,
     email : obj.email.toLowerCase(),
     mot_de_passe : SHA256(obj.password + salt).toString(encBase64),
-    avatar : obj.avatar,
+    avatar : 'fas fa-user',  // avatar 'standart' from font Awesome: https://fontawesome.com/icons/user 
     ville : obj.ville,
     age : obj.age,
     amis : [],
