@@ -22,9 +22,9 @@ router.get('/pullEvents', async function(req, res, next) {
 
 // Route pour récupérer un évènement spécifiquement --> SCREEN de la carte évènement détaillée
 // TESTE POSTMAN : OK
-router.get('/pullEventDetaille', async function(req, res, next) {
-
-  const event = await eventModel.findById(req.query.id)
+router.post('/pullEventDetaille', async function(req, res, next) {
+  console.log("req post id recup", req.body.id)
+  const event = await eventModel.findById(req.body.id)
  
   res.json(event);
 });
