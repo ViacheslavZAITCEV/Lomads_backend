@@ -14,6 +14,7 @@ cloudinary.config({
 });
 
 var users = require('../models/users');
+// var conversations = require('../models/conversations');
 const { render } = require('ejs');
 
 
@@ -201,14 +202,38 @@ router.get('/delete', async function(req, res, next) {
 
 /* -----------------  */
 /* GET users/getAvatars   */
-router.post('/getAvatars', async function(req, res, next) {
+router.get('/getAvatars', async function(req, res, next) {
 
   console.log('Route getAvatars');
   var token = req.body.token;
+  var token = 'pDJQWG4ievDB0ANHH1X3MCGKHBXDw37G';
   console.log('token = ', token);
   
   var response = {response : false};
 
+  var amisParisTab = await users.find({token});
+
+  var amisParis = amisParisTab.map( (user, i)=>{
+    return user._id;
+  });
+
+  try{
+    var resBD = await users
+      .find({ville : 'Paris'})
+      .populate('avatar')
+      .exec( (err, amis)=>{
+        if (err) {
+          console.log('error=', err);
+        }else{
+          amis = amisParis;
+          // amisParis.push(avatar);
+        }
+      })
+  }catch(e){
+    console.log(e);
+  }
+  console.log('amisParis =', amisParis);
+  console.log('resBD=', resBD);
 
   res.json(response);
 });
@@ -408,11 +433,11 @@ function getUrlCloud(path){
 }
 
 
-function deleteUserFromApp (user){
+async function deleteUserFromApp (user){
   var result = false;
   console.log('delete user from App');
   //
-  // instrutions pour supprimer les traces de l'utilisateur 'user'
+
   // il faut discouter dans l'equipe
 
   //  ****************************
@@ -434,13 +459,20 @@ function deleteUserFromApp (user){
   //   });
   // *******************************
   
+  // instrutions pour supprimer les traces de l'utilisateur 'user'
   if (user !== null){
+
+    // delFrends from mes Amis
     for (var ami of user.amis){
-      users.update({'id' : ami.id}, {$pull : {amis : user.id}});
+      await users.updateOne({'id' : ami.id}, {$pull : {amis : user.id}});
+    }
+
+    // supprimer id d'user des conversations
+    for (var disc of user.conversations){
+      await conversations.updateOne({'id' : disc.id},  {$pull : {auteur : user.id}} );
     }
   }
   
-  // delFrends from mes Amis
 
   // users.findOne(
   //   {"_id" : user._id}, // filter de recherche 
