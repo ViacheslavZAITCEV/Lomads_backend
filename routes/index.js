@@ -75,7 +75,7 @@ router.get('/likeEvent', async function(req, res, next) {
 
 // Route pour retrait de like :  ajouter l'id de l'utilisateur à la liste des likes de l'évènement et ajouter l'id du film au tableau de likes de l'utilisateur
 // TESTE POSTMAN : OK
-router.get('/dislikeEvent', async function(req, res, next) {
+router.get('/unlikeEvent', async function(req, res, next) {
 
   console.log("event",req.query.idEvent)
   console.log("user",req.query.idUser)
@@ -116,7 +116,7 @@ router.get('/dislikeEvent', async function(req, res, next) {
 
 
 
-
+  
 
 
 

@@ -37,7 +37,7 @@ var userSchema = mongoose.Schema({
     favoris: [{ type: mongoose.Schema.Types.ObjectId, ref: 'events' }],
     // CREATION DES CLEFS ETRANGERES POUR LA SUITE DU PROJET, A DECOMMENTER DES BESOIN
     // sorties : [{ type: mongoose.Schema.Types.ObjectId, ref: 'sorties' }],
-    // groupes_amis:[{ type: mongoose.Schema.Types.ObjectId, ref: 'friends' }],
+    // groupes_amis:[{ type: mongoose.Schema.Types.ObjectId, ref: 'groups' }],
     // conversations:[{ type: mongoose.Schema.Types.ObjectId, ref: 'conversations' }]
 })
 
