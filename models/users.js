@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 var mongoose = require('./connection')
 
 var userSchema = mongoose.Schema({
@@ -26,36 +24,38 @@ var userSchema = mongoose.Schema({
 var userModel = mongoose.model('users', userSchema)
 
 module.exports = userModel;
-=======
+
 // var mongoose = require('./connection')
-=======
+
 const mongoose = require("./connection");
->>>>>>> e939ebaa4c779903075b463dd7583873deb40dd0
+// e939ebaa4c779903075b463dd7583873deb40dd0
 
-const user = {
-    salt : String,
+var mongoose = require('./connection')
+// 14cef5ed6ac6b6499764371c298d073ff3ba36ad
+
+var userSchema = mongoose.Schema({
+    nom: String,
+    prenom: String,
+    email: String,
+    mot_de_passe: String,
+    ville: String,
     token : String,
-    nom : String,
-    prenom : String,
-    email : String,
-    password : String,
-    avatar : String,
-    ville : String,
-    age : Number,
-    amis : Array,
-    groupes : Array,
-    conversations : Array,
-    preferences : String,
-    confidentialite : String,
-    favoris : Array,
-    sorties : Array,
-}
+    salt: String,
+    avatar: String,
+    date_de_naissance : Date,
+    amis: [String],
+    // REVOIR A UN MOMENT LES PREFERENCES POUR FAIRE UN TABLEAU D'OBJETS
+    // ex :  updated: { type: Date, default: Date.now },
+    preferences: [String],
+    confidentialite: Boolean,
+    favoris: [{ type: mongoose.Schema.Types.ObjectId, ref: 'events' }],
+    // sorties : [{ type: mongoose.Schema.Types.ObjectId, ref: 'sorties' }],
+    // groupes_amis:[{ type: mongoose.Schema.Types.ObjectId, ref: 'friends' }],
+    // conversations:[{ type: mongoose.Schema.Types.ObjectId, ref: 'conversations' }]
+})
 
-var users = mongoose.model('users', mongoose.Schema(user));
+var userModel = mongoose.model('users', userSchema)
 
-<<<<<<< HEAD
-// module.exports = userModel;
->>>>>>> 404648db91dfcc2c85cdd28a8a44ea9ac04731e9
-=======
 module.exports = users;
->>>>>>> e939ebaa4c779903075b463dd7583873deb40dd0
+
+module.exports = userModel;
