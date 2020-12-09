@@ -480,15 +480,13 @@ async function deleteUserFromApp (user){
   if (user !== null){
 
     // delFrends from mes Amis
-    // version 1
-    // for (var ami of user.amis){
-    //   await users.updateOne({'id' : ami.id}, {$pull : {amis : user.id}});
-    // }
+    version 1
+    for (var ami of user.amis){
+      await users.updateOne({'id' : ami.id}, {$pull : {amis : user.id}});
+    }
 
     // version 2
-    var requet = {};
-
-    await users.updateMany({'id' : ami.id}, {$pull : {amis : user.id}});
+    // await users.updateMany({amis : user.id }, {$pull : {amis : user.id}});
     
 
     // supprimer id d'user des conversations
