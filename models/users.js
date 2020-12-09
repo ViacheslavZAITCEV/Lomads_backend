@@ -45,39 +45,3 @@ var userModel = mongoose.model('users', userSchema)
 
 module.exports = userModel;
 
-
-
-// VERSION SLAVA
-
-// // var mongoose = require('./connection')
-
-// const mongoose = require("./connection");
-// // e939ebaa4c779903075b463dd7583873deb40dd0
-
-// const user = {
-//     salt : String,
-//     token : String,
-//     nom : String,
-//     prenom : String,
-//     email : String,
-//     password : String,
-//     avatar : String,
-//     ville : String,
-//     age : Number,
-//     amis : Array,
-//     groupes : Array,
-//     conversations : Array,
-//     preferences : String,
-//     confidentialite : String,
-//     favoris : Array,
-//     sorties : Array,
-// }
-
-// var users = mongoose.model('users', mongoose.Schema(user));
-
-// // HEAD
-// // module.exports = userModel;
-// // 404648db91dfcc2c85cdd28a8a44ea9ac04731e9
-
-// module.exports = users;
-// // e939ebaa4c779903075b463dd7583873deb40dd0
