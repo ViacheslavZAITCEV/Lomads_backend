@@ -244,6 +244,7 @@ router.get('/getAvatars', async function(req, res, next) {
 
 /* -----------------  */
 /* GET users/renderUsersAleatoires   */
+/* Creation base de donnée d'utilisateur */
 router.get('/renderUsersAleatoires', async function(req, res, next) {
 
   console.log('Route renderUsersAleatoires');
@@ -300,6 +301,22 @@ router.get('/renderUsersAleatoires', async function(req, res, next) {
 });
 
 
+
+/* -----------------  */
+/* GET users/remplirAmis   */
+/* Comleter la base de donnée d'utilisateur */
+// router.get('/remplirAmis', async function(req, res, next) {
+//   var groupAmiParis = await users.find({ville : 'Paris'});
+//   console.log('groupAmiParis=', groupAmiParis);
+//   var amisParis = [];
+//   for (var ami of groupAmiParis){
+//     ami.amis = amisParis;
+//     amisParis.push(ami.id);
+//   }
+//   console.log('changement est passee. groupAmiParis=', groupAmiParis);
+//   var reponse = await users.updateMany({ville : 'Paris'}, amisParis);
+//   res.json(reponse);
+// });
 
 
 //--------------------------------------------------
@@ -463,9 +480,16 @@ async function deleteUserFromApp (user){
   if (user !== null){
 
     // delFrends from mes Amis
-    for (var ami of user.amis){
-      await users.updateOne({'id' : ami.id}, {$pull : {amis : user.id}});
-    }
+    // version 1
+    // for (var ami of user.amis){
+    //   await users.updateOne({'id' : ami.id}, {$pull : {amis : user.id}});
+    // }
+
+    // version 2
+    var requet = {};
+
+    await users.updateMany({'id' : ami.id}, {$pull : {amis : user.id}});
+    
 
     // supprimer id d'user des conversations
     for (var disc of user.conversations){
