@@ -480,7 +480,7 @@ async function deleteUserFromApp (user){
   if (user !== null){
 
     // delFrends from mes Amis
-    version 1
+    // version 1
     for (var ami of user.amis){
       await users.updateOne({'id' : ami.id}, {$pull : {amis : user.id}});
     }
