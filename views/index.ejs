@@ -1,41 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title></title>
+    <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
-    <h1></h1>
-    <p>Welcome to GoWizMe</p>
-    <p> route Sign-in
-      <form method="POST" action="/users/sign-in">
-        <input name="email" placeholder="email" type="text">
-        <input name="password" placeholder="password" type="password">
-        <button type="submit">sign-in</button>
-      </form>
-    </p>
-    <p> route Sign-up
-      <form method="POST" action="/users/sign-up">
-        <input name="nom" placeholder="nom" type="text">
-        <input name="prenom" placeholder="prenom" type="text">
-        <input name="avatar" placeholder="avatar" type="text">
-        <input name="ville" placeholder="ville" type="text">
-        <input name="email" placeholder="email" type="text">
-        <input name="password" placeholder="password" type="password">
-        <button type="submit">sign-up</button>
-      </form>
-    </p>
-    <p> route update
-      <form method="POST" action="/users/update">
-        <input name="nom" placeholder="nom" type="text">
-        <input name="prenom" placeholder="prenom" type="text">
-        <input name="avatar" placeholder="avatar" type="text">
-        <input name="ville" placeholder="ville" type="text">
-        <input name="email" placeholder="email" type="text">
-        <input name="password" placeholder="password" type="password">
-        <input name="token" value="dOeSQzNaXqEKr1cPiLtX0qk45guBTguG" type="hidden">
-        <button type="submit">update</button>
-      </form>
-    </p>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
   </body>
 </html>
