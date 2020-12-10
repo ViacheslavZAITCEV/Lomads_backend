@@ -57,7 +57,13 @@ router.post('/sign-up', async function(req, res, next) {
     } else {
 
       //creation une compte nouvelle
-      var newUser = await createUser(req.body);
+      console.log('body : ', req.body)
+      var newUser = await createUser({
+        nom : req.body.nom, 
+        prenom : req.body.prenom, 
+        email : email, 
+        password : req.body.password,
+        ville :  req.body.ville});
       console.log('newUser =', newUser);
       
       if( newUser.status){
@@ -123,7 +129,7 @@ router.post('/sign-in', async function(req, res, next) {
         response.amis  = userBD.amis;
         response.confidentialite  = userBD.confidentialite;
         response.age = userBD.age;
-        response.token = userBD.token;
+
       }else{
         response.error = 'wrong password';
       }
@@ -363,25 +369,50 @@ async function deleteOne(token){
 async function createUser(obj){
 
   var salt = uid2(32);
+
+  console.log('obj.nom: ', obj.nom);
+  console.log('obj.email: ', obj.email);
+  console.log('obj.prenom: ', obj.prenom);
+
+  // avatar 'standart' from font Awesome: https://fontawesome.com/icons/user 
   var newUser = new users ({
     salt : salt,
     token : uid2(32),
     nom : obj.nom,
     prenom : obj.prenom,
-    email : obj.email.toLowerCase(),
+    email : obj.email,
     mot_de_passe : SHA256(obj.password + salt).toString(encBase64),
-    avatar : 'fas fa-user',  // avatar 'standart' from font Awesome: https://fontawesome.com/icons/user 
+    avatar : 'fas fa-user',
     ville : obj.ville,
-    age : obj.age,
     amis : [],
     groupes : [],
     conversations : [],
-    preferences : '',
+    preferences : [{
+      cinema : false,
+      theatre: false,
+      exposition: false,
+      concert: false,
+
+      fantastique: false,
+      scienceFiction:  false,
+      comedie: false,
+      drame: false,
+      spectacleMusical: false,
+      contemporain: false,
+      oneManShow: false,
+      musiqueClassique: false,
+      musiqueFrancaise: false,
+      musiquePop: false,
+      musiqueRock: false,
+      beauxArts : false,
+      histoireCivilisations: false,
+  }],
     confidentialite : true,
     favoris : [],
-    sorties : [],
+    sorties : []
   });
 
+  console.log('obj to BD :', newUser);
   var response = {};
   try{
     response.status = true;
