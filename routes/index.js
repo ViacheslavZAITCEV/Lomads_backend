@@ -12,7 +12,7 @@ router.get('/', function(req, res, next) {
 router.get('/pullEvents', async function(req, res, next) {
 
   const events = await eventModel.find()
-  
+  console.log('route pullEvents', events);
   res.json(events);
 });
 
