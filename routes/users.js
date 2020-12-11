@@ -382,7 +382,7 @@ async function createUser(obj){
     prenom : obj.prenom,
     email : obj.email,
     mot_de_passe : SHA256(obj.password + salt).toString(encBase64),
-    avatar : 'fas fa-user',
+    avatar : 'https://www.flaticon.com/svg/static/icons/svg/1077/1077114.svg',
     ville : obj.ville,
     amis : [],
     groupes : [],
