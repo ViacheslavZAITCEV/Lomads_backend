@@ -36,9 +36,11 @@ router.get('/likeEvent', async function(req, res, next) {
 
   console.log("event",req.query.idEvent)
   console.log("user",req.query.idUser)
+  console.log("token",req.query.token)
 
   var idEvent = req.query.idEvent;
-  var idUser = req.query.idUser
+  var idUser = req.query.idUser;
+  var token = req.query.token;
 
   
   eventModel.findOneAndUpdate(
@@ -53,7 +55,7 @@ router.get('/likeEvent', async function(req, res, next) {
     });
 
   userModel.findOneAndUpdate(
-    { _id: idUser }, 
+    { token }, 
     { $push: {favoris: idEvent}},
       function (error, success) {
         if (error) {
