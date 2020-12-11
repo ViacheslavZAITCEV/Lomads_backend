@@ -141,8 +141,43 @@ router.post('/sign-in', async function(req, res, next) {
 
 
 
+
 /* -----------------  */
-/* GET users/update   */
+/* POST users/getUser   */
+router.post('/getUser', async function(req, res, next) {
+  
+  console.log('users/getUser');
+  var token = req.body.token;
+  console.log('token = ', token);
+  var response = {response : false};
+  
+  var userBD = await getUser({token});
+  if (userBD){
+    if (userBD.token){
+      response.response = true;
+      response.token = userBD.token;
+      response.nom = userBD.nom;
+      response.prenom =  userBD.prenom;
+      response.avatar = userBD.avatar;
+      response.ville  = userBD.ville;
+      response.preferences  = userBD.preferences;
+      response.groupes  = userBD.groupes;
+      response.eventsFavoris  = userBD.favoris;
+      response.sorties  = userBD.sorties;
+      response.amis  = userBD.amis;
+      response.confidentialite  = userBD.confidentialite;
+      response.age = userBD.age;
+    }else{
+      response.error = userBD;
+    }
+  }else{
+    response.error = 'token inconnu';
+  }
+  res.json(response);
+});
+
+/* -----------------  */
+/* POST users/update   */
 router.post('/update', async function(req, res, next) {
 
   console.log('Route update');
