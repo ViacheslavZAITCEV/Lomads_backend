@@ -167,6 +167,7 @@ router.post('/getUser', async function(req, res, next) {
       response.amis  = userBD.amis;
       response.confidentialite  = userBD.confidentialite;
       response.age = userBD.age;
+      response._id = userBD._id;
     }else{
       response.error = userBD;
     }
