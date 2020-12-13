@@ -147,11 +147,24 @@ router.post('/sign-in', async function(req, res, next) {
 router.post('/getUser', async function(req, res, next) {
   
   console.log('users/getUser');
-  var token = req.body.token;
-  console.log('token = ', token);
+
+  var requet = {};
+  if (req.body.token !==undefined){
+    requet.token = req.body.token;
+  }
+  console.log('token = ', requet.token);
+  if (req.body.email !==undefined){
+    requet.email = req.body.email;
+  }
+  if (req.body.nom !==undefined){
+    requet.nom = req.body.nom;
+  }
+  if (req.body.prenom !==undefined){
+    requet.prenom = req.body.prenom;
+  }
+
   var response = {response : false};
-  
-  var userBD = await getUser({token});
+  var userBD = await getUser({requet});
   if (userBD){
     if (userBD.token){
       response.response = true;
