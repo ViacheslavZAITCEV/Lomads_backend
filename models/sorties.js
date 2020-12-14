@@ -4,6 +4,7 @@ var sortieSchema = mongoose.Schema({
     evenementLie: [{ type: mongoose.Schema.Types.ObjectId, ref: 'events' }],
     organisateur: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
     nomSortie: String,
+    image: String,
     adresse: String,
     cp: String,
     date_debut: Date,

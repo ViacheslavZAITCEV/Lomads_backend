@@ -214,7 +214,7 @@ userModel.findOneAndUpdate(
 
 // LECTURE D'UNE SORTIE
 // TEST POSTMAN : OK
-router.post('/pullSortieDetaille', async function(req, res, next) {
+router.post('/pullSortieDetaillee', async function(req, res, next) {
   console.log("req post id recup", req.body.id)
   const sortie = await sortieModel.findById(req.body.id)
   
@@ -226,7 +226,6 @@ router.post('/pullSortieDetaille', async function(req, res, next) {
 }
    console.log("listAmisSortie ",listAmisSortie)
   
- 
   res.json(sortie, listAmisSortie);
 });
 
@@ -248,7 +247,6 @@ router.post('/pullFriendsList', async function(req, res, next) {
 }
    console.log("listAmis ",listAmis)
   
- 
   res.json(listAmis);
 });
 
@@ -283,8 +281,8 @@ router.post('/pullUser', async function(req, res, next) {
     
     console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ON COMMENCE ICI >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 
-    const user = await userModel.findOne({token: req.body.token})
-   
+    const user = await userModel.findOne({_id: req.body.id})
+
     var idUser=user.id
     var mesAmis=user.amis
 
