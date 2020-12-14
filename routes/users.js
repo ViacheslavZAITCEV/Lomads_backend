@@ -221,7 +221,38 @@ router.post('/update', async function(req, res, next) {
   res.json(response);
 });
 
+/* -----------------  */
+/* POST users/update   */
+router.post('/updateJSON', async function(req, res, next) {
 
+  console.log('Route updateJSON');
+  var preferences = JSON.parse(req.body.preferences);
+  var token = req.body.token;
+  console.log('token = ', token);
+  var response = {response : false};
+  
+  var oldUser = await getUser({token});
+  if (oldUser === null){
+    response.error = 'wrong token';
+  } else {
+    var resBD;
+    if (token){
+      resBD = await updateUserByToken(token, preferences);
+      console.log("resBD=", resBD);
+    // }else{
+    //   resBD = await updateUser(oldUser , body);
+    //   console.log('updetedUser=', updetedUser)
+    //   token= resBD.token;
+    }
+    if ( ! resBD.status ){
+      response.error = resBD;
+    }else{
+      response.response = true;
+      response.token = token;
+    }
+  }
+  res.json(response);
+});
 
 
 /* -----------------  */
