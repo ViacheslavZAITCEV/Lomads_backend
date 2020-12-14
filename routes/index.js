@@ -134,7 +134,7 @@ router.get('/unlikeEvent', async function(req, res, next) {
 // ---------------------------------------ROUTES SORTIES------------------------------------------
 
 // ROUTE POUR CREER UNE SORTIE
-// TEST POSTMAN : 
+// TEST POSTMAN : OK
 router.post('/addSortie', async function(req, res, next) {
 
   console.log("req.body.part",req.body.part)
