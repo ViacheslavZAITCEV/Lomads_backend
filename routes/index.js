@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const mongoose = require('mongoose');
 
 var userModel = require('../models/users')
 var eventModel = require('../models/events')
@@ -131,6 +132,93 @@ router.get('/unlikeEvent', async function(req, res, next) {
 
 
 // ---------------------------------------ROUTES SORTIES------------------------------------------
+
+// ROUTE POUR CREER UNE SORTIE
+// TEST POSTMAN : 
+router.post('/addSortie', async function(req, res, next) {
+
+  console.log("req.body.part",req.body.part)
+  var convives = req.body.part.split(",")
+  console.log("convives",convives)
+
+
+  var newSortie = new sortieModel ({
+    evenementLie: req.body.evenementLie,
+   organisateur: req.body.organisateur,
+   nomSortie: req.body.nomSortie,
+   adresse: req.body.adresse,
+   cp: req.body.cp,
+   date_debut: req.body.debut,
+   date_fin: req.body.fin,
+   duree: req.body.duree,
+   type: req.body.type,
+   participants: convives
+ 
+ });
+ 
+   var sortie = await newSortie.save();
+ console.log("SORTIE CREEE", sortie)
+
+ // LE CREATEUR EST EGALEMENT UN PARTICIPANT (FACON DE RECHERCHER POUR L'ECRAN PLANIFIER), DONC ON LUI AJOUTE L'ID SORTIE DANS SES SORTIES ET IDEM POUR LES SORTIES, AJOUT DE L'ID CREATEUR
+userModel.findOneAndUpdate(
+  { _id: req.body.organisateur }, 
+  { $push: {sorties: sortie._id}},
+    function (error, success) {
+      if (error) {
+          console.log("ERROR EVENT",error);
+      } else {
+          console.log("SUCCESS USER", success);
+      }
+  });
+
+  sortieModel.findOneAndUpdate(
+    { _id: sortie._id }, 
+    { $push: {participants: req.body.organisateur}},
+      function (error, success) {
+        if (error) {
+            console.log("ERROR EVENT",error);
+        } else {
+            console.log("SUCCESS PUSH AMIS SORTIE", success);
+        }
+    }
+    );
+
+  console.log("poulet")
+
+// POUR CHAQUE AMI, ON SE CONNECTE A SON PROFIL ET ON LUI AJOUTE L'ID DE LA SORTIE
+ for (var idAmiSortie of convives) {
+  userModel.findOneAndUpdate(
+    { _id: idAmiSortie }, 
+    { $push: {sorties: sortie._id}},
+      function (error, success) {
+        if (error) {
+            console.log("ERROR EVENT",error);
+        } else {
+            console.log("SUCCESS AMIS", success);
+        }
+    });}
+
+    AbortController()
+
+  res.render(sortie);
+});
+
+
+
+
+
+// LECTURE D'UNE SORTIE
+// TEST POSTMAN : OK
+router.post('/pullSortieDetaille', async function(req, res, next) {
+  console.log("req post id recup", req.body.id)
+  const sortie = await sortieModel.findById(req.body.id)
+ 
+  res.json(sortie);
+});
+
+
+
+
 
 
 
