@@ -183,7 +183,7 @@ userModel.findOneAndUpdate(
     }
     );
 
-  console.log("poulet")
+
 
 // POUR CHAQUE AMI, ON SE CONNECTE A SON PROFIL ET ON LUI AJOUTE L'ID DE LA SORTIE
  for (var idAmiSortie of convives) {
@@ -222,7 +222,43 @@ router.post('/pullSortieDetaille', async function(req, res, next) {
    console.log("listAmisSortie ",listAmisSortie)
   
  
-  res.json(sortie);
+  res.json(sortie, listAmisSortie);
+});
+
+
+
+
+
+
+// RECUPERATION DES AMIS
+router.post('/pullFriendsList', async function(req, res, next) {
+  console.log("req post id recup", req.body.id)
+  const user = await userModel.findById(req.body.id)
+  
+  var listAmis = [];
+  for (var amis of user.amis) {
+    var donneesAmis = await userModel.findById(amis)
+    // console.log("donneesAmis",donneesAmis)
+    listAmis.push(donneesAmis)
+}
+   console.log("listAmis ",listAmis)
+  
+ 
+  res.json(listAmis);
+});
+
+
+
+// CHERCHER DES AMIS 
+router.post('/searchFriends', async function(req, res, next) {
+  console.log("req post id recup", req.body.nom)
+
+  // fonction pour mettre une majuscule à toute première lettre de recherche, comme dans la BDD
+  function strUcFirst(a){return (a+'').charAt(0).toUpperCase()+a.substr(1);}
+  
+  const resultatsRecherche = await userModel.find({nom : strUcFirst(req.body.nom)})
+   
+  res.json(resultatsRecherche);
 });
 
 
