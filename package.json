@@ -7,18 +7,30 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "test": "jest"
   },
   "dependencies": {
+    "cloudinary": "^1.23.0",
     "cookie-parser": "~1.4.4",
+    "crypto-js": "^4.0.0",
     "debug": "~2.6.9",
     "ejs": "~2.6.1",
     "express": "~4.16.1",
+    "express-fileupload": "^1.2.0",
     "http-errors": "~1.6.3",
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
     "mongoose": "^5.11.4",
 >>>>>>> 404648db91dfcc2c85cdd28a8a44ea9ac04731e9
     "morgan": "~1.9.1"
+=======
+    "mongoose": "^5.11.7",
+    "morgan": "~1.9.1",
+    "react-native-maps": "^0.27.1",
+    "supertest": "^6.0.1",
+    "uid2": "0.0.3"
+>>>>>>> f950fad95cc029609456ac15bf98f8c512593316
   }
 }
