@@ -48,16 +48,15 @@ router.post('/sign-up', async function(req, res, next) {
   
     var email = emailRef.toLowerCase();
 
-    // on cherche si l'email existe déjà dans la base de données.
-    // si oui, alors erreur 'email déjà utlisé'
+    // on cherche email dans la Base de données
     var test = await getUser({email})
     console.log('test=', test);
     if ( test != null){
-      response.error = 'email déjà utilisé';
+      response.error = 'email is used';
 
     } else {
 
-      //si l'email n'existe pas dans la base de données, alors creation d'un nouveau compte
+      //creation une compte nouvelle
       console.log('body : ', req.body)
       var newUser = await createUser({
         nom : req.body.nom, 
@@ -67,7 +66,7 @@ router.post('/sign-up', async function(req, res, next) {
         ville :  req.body.ville});
       console.log('newUser =', newUser);
       
-      if( newUser.status ){
+      if( newUser.status){
 
         // on prepare la reponse pour frontend
         response.response = true;
@@ -538,7 +537,7 @@ async function deleteUserFromApp (user){
   console.log('delete user from App');
   //
 
-  // il faut discuter avec l'equipe
+  // il faut discouter dans l'equipe
 
   //  ****************************
   // console.log("event",req.query.idEvent)
