@@ -164,7 +164,7 @@ router.post('/getUser', async function(req, res, next) {
   }
 
   var response = {response : false};
-  var userBD = await getUser({requet});
+  var userBD = await getUser(requet);
   if (userBD){
     if (userBD.token){
       response.response = true;
@@ -187,6 +187,7 @@ router.post('/getUser', async function(req, res, next) {
   }else{
     response.error = 'token inconnu';
   }
+  console.log('response to frontend:', response);
   res.json(response);
 });
 
@@ -384,6 +385,7 @@ router.get('/renderUsersAleatoires', async function(req, res, next) {
 async function getUser(obj){
   var reponse;
   try{
+    console.log('function users/getUser, requet=', obj);
     reponse = users.findOne(obj);
   }catch(e){
     console.log(e);
