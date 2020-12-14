@@ -142,8 +142,58 @@ router.post('/sign-in', async function(req, res, next) {
 
 
 
+
 /* -----------------  */
-/* GET users/update   */
+/* POST users/getUser   */
+router.post('/getUser', async function(req, res, next) {
+  
+  console.log('users/getUser');
+
+  var requet = {};
+  if (req.body.token !==undefined){
+    requet.token = req.body.token;
+  }
+  console.log('token = ', requet.token);
+  if (req.body.email !==undefined){
+    requet.email = req.body.email;
+  }
+  if (req.body.nom !==undefined){
+    requet.nom = req.body.nom;
+  }
+  if (req.body.prenom !==undefined){
+    requet.prenom = req.body.prenom;
+  }
+
+  var response = {response : false};
+  var userBD = await getUser(requet);
+  if (userBD){
+    if (userBD.token){
+      response.response = true;
+      response.token = userBD.token;
+      response.nom = userBD.nom;
+      response.prenom =  userBD.prenom;
+      response.avatar = userBD.avatar;
+      response.ville  = userBD.ville;
+      response.preferences  = userBD.preferences;
+      response.groupes  = userBD.groupes;
+      response.eventsFavoris  = userBD.favoris;
+      response.sorties  = userBD.sorties;
+      response.amis  = userBD.amis;
+      response.confidentialite  = userBD.confidentialite;
+      response.age = userBD.age;
+      response._id = userBD._id;
+    }else{
+      response.error = userBD;
+    }
+  }else{
+    response.error = 'token inconnu';
+  }
+  console.log('response to frontend:', response);
+  res.json(response);
+});
+
+/* -----------------  */
+/* POST users/update   */
 router.post('/update', async function(req, res, next) {
 
   console.log('Route update');
@@ -336,6 +386,7 @@ router.get('/renderUsersAleatoires', async function(req, res, next) {
 async function getUser(obj){
   var reponse;
   try{
+    console.log('function users/getUser, requet=', obj);
     reponse = users.findOne(obj);
   }catch(e){
     console.log(e);
@@ -383,7 +434,7 @@ async function createUser(obj){
     prenom : obj.prenom,
     email : obj.email,
     mot_de_passe : SHA256(obj.password + salt).toString(encBase64),
-    avatar : 'fas fa-user',
+    avatar : 'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png',
     ville : obj.ville,
     amis : [],
     groupes : [],

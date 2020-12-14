@@ -33,35 +33,40 @@ router.get('/likeEvent', async function(req, res, next) {
 
   console.log("event",req.query.idEvent)
   console.log("user",req.query.idUser)
+  console.log("token",req.query.token)
 
   var idEvent = req.query.idEvent;
-  var idUser = req.query.idUser
+  var idUser = req.query.idUser;
+  var token = req.query.token;
 
-  
-  eventModel.findOneAndUpdate(
-    { _id: idEvent }, 
-    { $push: {popularite: idUser}},
-      function (error, success) {
-        if (error) {
-            console.log("ERROR EVENT",error);
-        } else {
-            console.log("SUCCESS EVENT", success);
-        }
-    });
+  try{
+    eventModel.findOneAndUpdate(
+      { _id: idEvent }, 
+      { $push: {popularite: idUser}},
+        function (error, success) {
+          if (error) {
+              console.log("ERROR EVENT",error);
+          } else {
+              console.log("SUCCESS EVENT", success);
+          }
+      });
 
-  userModel.findOneAndUpdate(
-    { _id: idUser }, 
-    { $push: {favoris: idEvent}},
-      function (error, success) {
-        if (error) {
-            console.log("ERROR USER",error);
-        } else {
-            console.log("SUCCESS USER", success);
-        }
-    });
+    userModel.findOneAndUpdate(
+      { token }, 
+      { $push: {favoris: idEvent}},
+        function (error, success) {
+          if (error) {
+              console.log("ERROR USER",error);
+          } else {
+              console.log("SUCCESS USER", success);
+          }
+      });
 
-    const event= eventModel.findById(idEvent)
-    const user= userModel.findById(idUser)
+      const event= eventModel.findById(idEvent);
+      const user= userModel.findById(idUser);
+    }catch(e){
+      console.log(e);
+    }
  
     console.log("VERIF POPULARITE EVENT", event.popularite)
     console.log("VERIF LIKE USER", user.favoris)
