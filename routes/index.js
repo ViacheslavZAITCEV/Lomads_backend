@@ -44,8 +44,8 @@ router.get('/likeEvent', async function (req, res, next) {
   var idUser = req.query.idUser;
   var token = req.query.token;
 
-  const event;
-  const user;
+  var event;
+  var user;
 
   try {
     eventModel.findOneAndUpdate(
@@ -91,7 +91,10 @@ router.get('/unlikeEvent', async function (req, res, next) {
   console.log("user", req.query.idUser)
 
   var idEvent = req.query.idEvent;
-  var idUser = req.query.idUser
+  var idUser = req.query.idUser;
+
+  var event;
+  var user;
 
   eventModel.findOneAndUpdate(
     { _id: idEvent },
@@ -115,8 +118,8 @@ router.get('/unlikeEvent', async function (req, res, next) {
       }
     });
 
-  const event = eventModel.findById(idEvent)
-  const user = userModel.findById(idUser)
+  event = eventModel.findById(idEvent)
+  user = userModel.findById(idUser)
 
   console.log("VERIF POPULARITE EVENT", event.popularite)
   console.log("VERIF LIKE USER", user.favoris)
