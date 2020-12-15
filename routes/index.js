@@ -285,7 +285,9 @@ router.post('/pullUser', async function (req, res, next) {
 
   console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ON COMMENCE ICI >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 
-  const user = await userModel.findOne({ _id: req.body.id })
+  console.log(req.body.id)
+  // const user = await userModel.findById( req.body.id )
+  const user = await userModel.findOne({_id: req.body.id})
 
   var idUser = user.id
   var mesAmis = user.amis
@@ -301,7 +303,7 @@ router.post('/pullUser', async function (req, res, next) {
 
   // mes likes (OK)
   const mesLikes = await eventModel.find({ popularite: idUser })
-  // console.log("mesLikes ",mesLikes)
+  console.log("mesLikes ",mesLikes)
 
 
 
@@ -416,7 +418,7 @@ router.post('/pullUser', async function (req, res, next) {
 
 
 
-  res.json(user, mesSorties, mesLikes, sortiesAffichees, LikesDesAmis)
+  res.json({user, mesSorties, mesLikes, sortiesAffichees, LikesDesAmis})
 
 });
 
