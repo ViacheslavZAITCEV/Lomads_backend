@@ -36,9 +36,9 @@ router.post('/pullEventDetaille', async function (req, res, next) {
 // TESTE POSTMAN : OK
 router.get('/likeEvent', async function (req, res, next) {
 
-  console.log("event", req.query.idEvent)
-  console.log("user", req.query.idUser)
-  console.log("token", req.query.token)
+  // console.log("event", req.query.idEvent)
+  // console.log("user", req.query.idUser)
+  // console.log("token", req.query.token)
 
   var idEvent = req.query.idEvent;
   var idUser = req.query.idUser;
@@ -87,8 +87,8 @@ router.get('/likeEvent', async function (req, res, next) {
 // TESTE POSTMAN : OK
 router.get('/unlikeEvent', async function (req, res, next) {
 
-  console.log("event", req.query.idEvent)
-  console.log("user", req.query.idUser)
+  // console.log("event", req.query.idEvent)
+  // console.log("user", req.query.idUser)
 
   var idEvent = req.query.idEvent;
   var idUser = req.query.idUser;
@@ -121,8 +121,8 @@ router.get('/unlikeEvent', async function (req, res, next) {
   event = eventModel.findById(idEvent)
   user = userModel.findById(idUser)
 
-  console.log("VERIF POPULARITE EVENT", event.popularite)
-  console.log("VERIF LIKE USER", user.favoris)
+  // console.log("VERIF POPULARITE EVENT", event.popularite)
+  // console.log("VERIF LIKE USER", user.favoris)
 
   res.json({ event: event.popularite, user: user.favoris });
 });
