@@ -221,7 +221,36 @@ router.post('/update', async function(req, res, next) {
   res.json(response);
 });
 
+/* -----------------  */
+/* POST users/updatePrefs   */
+router.post('/updatePrefs', async function(req, res, next) {
 
+  console.log('Route updatePrefs');
+  var idPrefs = req.body.idPref;
+  var preferences = JSON.parse(req.body.preferences);
+  var token = req.body.token;
+  console.log('token = ', token);
+  console.log('prefs = ', preferences);
+  var response = {response : false};
+  
+  var oldUser = await getUser({token});
+  if (oldUser === null){
+    response.error = 'wrong token';
+  } else {
+    var resBD;
+    if (token){
+      resBD = await updateUserPreferences(token, preferences);
+      console.log("resBD=", resBD);
+    }
+    if ( ! resBD.status ){
+      response.error = resBD;
+    }else{
+      response.response = true;
+      response.token = token;
+    }
+  }
+  res.json(response);
+});
 
 
 /* -----------------  */
@@ -404,7 +433,20 @@ async function updateUserByToken(token, updatedUser){
     reponse.error = e;
   }
   return reponse;
+
 }
+async function updateUserPreferences(token, prefs){
+  var reponse = {status : false};
+  try{
+    reponse.user = await users.updateOne({token}, {preferences : prefs});
+    reponse.status = true;
+  }catch(e){
+    console.log(e);
+    reponse.error = e;
+  }
+  return reponse;
+}
+
 async function deleteOne(token){
   var reponse = {status : false};
   try{
