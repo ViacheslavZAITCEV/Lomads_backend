@@ -320,10 +320,15 @@ router.post('/searchFriends', async function (req, res, next) {
   // fonction pour mettre une majuscule à toute première lettre de recherche, comme dans la BDD
   function strUcFirst(a) { return (a + '').charAt(0).toUpperCase() + a.substr(1); }
 
-  const resultatsRecherche = await userModel.find({ nom: strUcFirst(req.body.nom) })
+  console.log(strUcFirst(req.body.nom))
 
+  const resultatsRecherche = await userModel.find({ nom: strUcFirst(req.body.nom) })
+  console.log(">>>>>>>>>>>>>>>>",resultatsRecherche)
   res.json(resultatsRecherche);
+
 });
+
+//? est ce qu'on veut afficher -> resultat de la research dans FRIENDSADDSCREEN
 
 
 
