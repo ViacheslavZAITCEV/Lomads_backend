@@ -148,23 +148,80 @@ router.get('/unlikeEvent', async function (req, res, next) {
 // TEST POSTMAN : OK
 router.post('/addSortie', async function (req, res, next) {
 
-  console.log("req.body.part", req.body.part)
-  var convives = req.body.part.split(",")
-  console.log("convives", convives)
+  var idEvenement;
+  var idOrganisateur;
 
-  var newSortie = new sortieModel({
-    evenementLie: req.body.evenementLie,
-    organisateur: req.body.organisateur,
-    nomSortie: req.body.nomSortie,
-    image: req.body.image,
-    adresse: req.body.adresse,
-    cp: req.body.cp,
-    date_debut: req.body.debut,
-    date_fin: req.body.fin,
-    duree: req.body.duree,
-    type: req.body.type,
-    participants: convives
-  });
+  if (req.body.evenementLie == undefined) {
+    idEvenement=0
+  } else {
+    idEvenement=req.body.evenementLie
+  }
+
+
+
+  if (req.body.part!= undefined && req.body.part.length >1) {
+    var convives = req.body.part.split(",")
+    // console.log("convives",convives)
+  
+    var newSortie = new sortieModel ({
+     evenementLie: idEvenement,
+     organisateur: req.body.organisateur,
+     nomSortie: req.body.nomSortie,
+     image: req.body.image,
+     adresse: req.body.adresse,
+     cp: req.body.cp,
+     date_debut: req.body.debut,
+     date_fin: req.body.fin,
+     duree: req.body.duree,
+     type: req.body.type,
+     participants: convives
+   });
+  } else if (req.body.part!= undefined && req.body.part.length == 1) {
+      var newSortie = new sortieModel ({
+       evenementLie: idEvenement,
+       organisateur: req.body.organisateur,
+       nomSortie: req.body.nomSortie,
+       image: req.body.image,
+       adresse: req.body.adresse,
+       cp: req.body.cp,
+       date_debut: req.body.debut,
+       date_fin: req.body.fin,
+       duree: req.body.duree,
+       type: req.body.type,
+       participants: req.body.part
+     });
+  } else {
+    var newSortie = new sortieModel ({
+      evenementLie: idEvenement,
+      organisateur: req.body.organisateur,
+      nomSortie: req.body.nomSortie,
+      image: req.body.image,
+      adresse: req.body.adresse,
+      cp: req.body.cp,
+      date_debut: req.body.debut,
+      date_fin: req.body.fin,
+      duree: req.body.duree,
+      type: req.body.type,
+    });
+  }
+  
+  // console.log("req.body.part", req.body.part)
+  // var convives = req.body.part.split(",")
+  // console.log("convives", convives)
+
+  // var newSortie = new sortieModel({
+  //   evenementLie: req.body.evenementLie,
+  //   organisateur: req.body.organisateur,
+  //   nomSortie: req.body.nomSortie,
+  //   image: req.body.image,
+  //   adresse: req.body.adresse,
+  //   cp: req.body.cp,
+  //   date_debut: req.body.debut,
+  //   date_fin: req.body.fin,
+  //   duree: req.body.duree,
+  //   type: req.body.type,
+  //   participants: convives
+  // });
 
   var sortie = await newSortie.save();
   console.log("SORTIE CREEE", sortie)
