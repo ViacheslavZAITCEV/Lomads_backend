@@ -77,7 +77,7 @@ router.post('/sign-up', async function(req, res, next) {
         response.ville  = newUser.user.ville;
         response.preferences  = newUser.user.preferences;
         response.groupes  = newUser.user.groupes;
-        response.eventsFavoris  = newUser.user.favoris;
+        response.favoris  = newUser.user.favoris;
         response.sorties  = newUser.user.sorties;
         response.amis  = newUser.user.amis;
         response.confidentialite  = newUser.user.confidentialite;
@@ -124,7 +124,7 @@ router.post('/sign-in', async function(req, res, next) {
         response.ville  = userBD.ville;
         response.preferences  = userBD.preferences;
         response.groupes  = userBD.groupes;
-        response.eventsFavoris  = userBD.favoris;
+        response.favoris  = userBD.favoris;
         response.sorties  = userBD.sorties;
         response.amis  = userBD.amis;
         response.confidentialite  = userBD.confidentialite;
@@ -175,7 +175,7 @@ router.post('/getUser', async function(req, res, next) {
       response.ville  = userBD.ville;
       response.preferences  = userBD.preferences;
       response.groupes  = userBD.groupes;
-      response.eventsFavoris  = userBD.favoris;
+      response.favoris  = userBD.favoris;
       response.sorties  = userBD.sorties;
       response.amis  = userBD.amis;
       response.confidentialite  = userBD.confidentialite;
