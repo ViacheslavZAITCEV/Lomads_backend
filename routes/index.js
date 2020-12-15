@@ -315,20 +315,22 @@ router.post('/pullFriendsList', async function (req, res, next) {
 
 // CHERCHER DES AMIS 
 router.post('/searchFriends', async function (req, res, next) {
-  console.log("req post id recup", req.body.nom)
 
   // fonction pour mettre une majuscule à toute première lettre de recherche, comme dans la BDD
   function strUcFirst(a) { return (a + '').charAt(0).toUpperCase() + a.substr(1); }
 
-  console.log(strUcFirst(req.body.nom))
-
   const resultatsRecherche = await userModel.find({ nom: strUcFirst(req.body.nom) })
-  console.log(">>>>>>>>>>>>>>>>",resultatsRecherche)
+
+  console.log()
+  console.log("INDEX.JS / NOM=>",resultatsRecherche[0].nom)
+  console.log("INDEX.JS / PRENOM=>",resultatsRecherche[0].prenom)
+  console.log("INDEX.JS / AVATAR URL=>",resultatsRecherche[0].avatar)
+  console.log()
+
   res.json(resultatsRecherche);
 
 });
 
-//? est ce qu'on veut afficher -> resultat de la research dans FRIENDSADDSCREEN
 
 
 
@@ -380,22 +382,22 @@ router.post('/pullUser', async function (req, res, next) {
 
 
   for (var listAmis of mesAmis) {
-    console.log("listAmis", listAmis)
+    console.log("listAmis: ", listAmis)
     var listsortiesami = await userModel.findById(listAmis)
-    console.log("listsortiesami", listsortiesami)
+    console.log("listsortiesami: ", listsortiesami)
     var listingsorties = listsortiesami.sorties
-    console.log("listingsorties", listingsorties)
+    console.log("listingsorties: ", listingsorties)
     idDesSorties.push(listingsorties)
   }
 
-  console.log("idDesSorties", idDesSorties)
+  console.log("idDesSorties: ", idDesSorties)
 
   var idDesSortiesConcatDoublons = []
 
   for (var i = 0; i < idDesSorties.length; i++) {
     idDesSortiesConcatDoublons = idDesSortiesConcatDoublons.concat(idDesSorties[i])
   }
-  console.log("idDesSortiesConcat", typeof (idDesSortiesConcatDoublons))
+  console.log("idDesSortiesConcat: ", typeof (idDesSortiesConcatDoublons))
 
 
   // SUPPRESSION DE DOUBLONS
@@ -411,7 +413,7 @@ router.post('/pullUser', async function (req, res, next) {
   }
 
   var idDesSortiesConcatSansDoublons = cleanArray(idDesSortiesConcatDoublons);
-  console.log("idDesSortiesConcatSansDoublons", idDesSortiesConcatSansDoublons);
+  console.log("idDesSortiesConcatSansDoublons: ", idDesSortiesConcatSansDoublons);
 
   // RECUP DES INFOS SORTIES
   var sortiesAmis = []
@@ -419,7 +421,7 @@ router.post('/pullUser', async function (req, res, next) {
     var sortiesami = await sortieModel.findById(sorts)
     sortiesAmis.push(sortiesami)
   }
-  console.log("sortiesAmis", sortiesAmis)
+  console.log("sortiesAmis: ", sortiesAmis)
 
   // VERIF DU TYPE ET S'IL FAUT AFFICHER OU NON A L'UTILISATEUR
   var sortiesAffichees = []
