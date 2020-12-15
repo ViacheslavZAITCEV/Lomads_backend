@@ -260,6 +260,7 @@ router.post('/searchFriends', async function(req, res, next) {
   function strUcFirst(a){return (a+'').charAt(0).toUpperCase()+a.substr(1);}
   
   const resultatsRecherche = await userModel.find({nom : strUcFirst(req.body.nom)})
+  console.log(resultatsRecherche)
    
   res.json(resultatsRecherche);
 });
