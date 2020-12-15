@@ -44,6 +44,9 @@ router.get('/likeEvent', async function (req, res, next) {
   var idUser = req.query.idUser;
   var token = req.query.token;
 
+  const event;
+  const user;
+
   try {
     eventModel.findOneAndUpdate(
       { _id: idEvent },
@@ -57,7 +60,7 @@ router.get('/likeEvent', async function (req, res, next) {
       });
 
     userModel.findOneAndUpdate(
-      { token },
+      { _id: idUser },
       { $push: { favoris: idEvent } },
       function (error, success) {
         if (error) {
@@ -66,15 +69,15 @@ router.get('/likeEvent', async function (req, res, next) {
           console.log("SUCCESS USER", success);
         }
       });
+    event = eventModel.findById(idEvent);
+    user = userModel.findById(idUser);
 
-    const event = eventModel.findById(idEvent);
-    const user = userModel.findById(idUser);
   } catch (e) {
-    console.log(e);
+    // console.log(e);
   }
 
-  console.log("VERIF POPULARITE EVENT", event.popularite)
-  console.log("VERIF LIKE USER", user.favoris)
+  // console.log("VERIF POPULARITE EVENT", event.popularite)
+  // console.log("VERIF LIKE USER", user.favoris)
 
   res.json({ event: event.popularite, user: user.favoris });
 });
