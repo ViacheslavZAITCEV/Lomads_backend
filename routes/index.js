@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 var userModel = require('../models/users')
 var eventModel = require('../models/events')
 var sortieModel = require('../models/sorties')
+var friendRequestModel = require('../models/friendRequest')
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -283,24 +284,158 @@ router.post('/pullFriendsList', async function (req, res, next) {
 // CHERCHER DES AMIS 
 router.post('/searchFriends', async function (req, res, next) {
 
+  try{
   // fonction pour mettre une majuscule à toute première lettre de recherche, comme dans la BDD
   function strUcFirst(a) { return (a + '').charAt(0).toUpperCase() + a.substr(1); }
 
   const resultatsRecherche = await userModel.find({ nom: strUcFirst(req.body.nom) })
+  // const resultatsRecherche = await userModel.find({ nom: strUcFirst(req.body.nom) } $or {prenom : strUcFirst(req.body.nom)})
+  res.json(resultatsRecherche);
+  }catch(e){
+    console.log(e)
+  }
+});
 
   console.log()
   console.log("INDEX.JS / NOM=>", resultatsRecherche[0].nom)
   console.log("INDEX.JS / PRENOM=>", resultatsRecherche[0].prenom)
   console.log("INDEX.JS / AVATAR URL=>", resultatsRecherche[0].avatar)
-  console.log()
 
-  res.json(resultatsRecherche);
+
+
+// Route creation Demande  amis 
+router.post('/demandeFriend', async function (req, res, next) {
+  
+  console.log();
+  console.log("INDEX.JS, route: /demandeFriend");
+  console.log("req.body.token=", req.body.token);
+  console.log("req.body.idAmi=", req.body.idAmi);
+
+  var result = {status : false}
+  try{
+    var user = await userModel.findOne({token : req.body.token});
+    console.log(user);
+    const newDemande = new friendRequestModel({
+      demandeur: user._id,
+      receveur: req.body.idAmi,
+      statut: true
+    })
+  
+    result.response = await newDemande.save();
+    result.status = true;
+  }catch(e){
+    result.error = e;
+    console.log(e);
+  }
+  console.log("result=",result);
+
+  res.json(result);
 
 });
 
 
 
 
+
+// Route recherche les Demandes  d'amis 
+router.post('/findDemandes', async function (req, res, next) {
+  
+  console.log();
+  console.log("INDEX.JS, route: /findDemandes");
+  console.log("req.body.token=", req.body.token);
+
+  var result = {status : false}
+
+  // try{
+    var user = await userModel.findOne({token : req.body.token});
+  //   console.log("ROUTE FIND DEMANDES / USER._ID=>>>>>>>",user._id)
+  //   result.response = await friendRequestModel.find({receveur:user._id});
+  //   result.status = true;
+  // }catch(e){
+  //   result.error = e;
+  //   console.log(e);
+  // }
+  // console.log("result=",result);
+  // console.log()
+
+  var listeDesDemandes = await friendRequestModel.find({receveur : user._id})
+
+    var idDeMesDemandeurs=[]
+      
+    for (var listId of listeDesDemandes) {
+      idDeMesDemandeurs.push(listId.demandeur)
+    }
+
+    console.log("idDeMesDemandeurs",idDeMesDemandeurs)
+
+    var demandeurs=[]
+    for (var futursAmis of idDeMesDemandeurs) {
+      var liteDesDemandes = await userModel.findById(futursAmis)
+      demandeurs.push(liteDesDemandes)
+    }
+
+    console.log("demandeurs",demandeurs)
+
+  res.json(demandeurs);
+
+});
+
+// Route recherche les Demandes  d'amis 
+router.post('/accepteDemande', async function (req, res, next) {
+  
+  console.log();
+  console.log("INDEX.JS, route: /findDemandes");
+  console.log("req.body.token=", req.body.token);
+
+  var idAmi = req.body.idDemandeur;
+  var result = {status : false}
+  try{
+    var user1 = await userModel.findOneAndUpdate(
+      {token : req.body.token}, 
+      {$push : {idAmi}}
+    );
+    var idUser = user1._id;
+    var user2 = await userModel.findOneAndUpdate(
+      {id : idAmis}, 
+      {$push : {idUser}}
+    );
+    var remove = await friendRequestModel.remove({receveur : idUser, demandeur: idAmi })
+    result.status = true;
+  }catch(e){
+    result.error = e;
+    console.log(e);
+  }
+  console.log("result=",result);
+  console.log()
+
+  res.json(result);
+
+});
+
+// Route suppresion une Demande  d'amis 
+router.post('/delDemande', async function (req, res, next) {
+  
+  console.log();
+  console.log("INDEX.JS, route: /findDemandes");
+  console.log("req.body.token=", req.body.token);
+
+  var idAmi = req.body.idDemandeur;
+  var result = {status : false}
+  try{
+    var user1 = await userModel.findOne({token : req.body.token});
+    var idUser = user1._id;
+    result.response = await friendRequestModel.remove({receveur : idUser, demandeur: idAmi})
+    result.status = true;
+  }catch(e){
+    result.error = e;
+    console.log(e);
+  }
+  console.log("result=",result);
+  console.log()
+
+  res.json(result);
+
+});
 
 
 
