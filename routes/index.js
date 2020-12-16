@@ -15,9 +15,8 @@ router.get('/', function (req, res, next) {
 // Route pour récupérer l'ensemble des évènements --> SCREEN des évènements
 // TESTE POSTMAN : OK
 router.get('/pullEvents', async function (req, res, next) {
-
   const events = await eventModel.find()
-  console.log('route pullEvents', events);
+  // console.log('route pullEvents', events);
   res.json(events);
 });
 
@@ -25,9 +24,8 @@ router.get('/pullEvents', async function (req, res, next) {
 // Route pour récupérer un évènement spécifiquement --> SCREEN de la carte évènement détaillée
 // TESTE POSTMAN : OK
 router.post('/pullEventDetaille', async function (req, res, next) {
-  console.log("req post id recup", req.body.id)
+  // console.log("req post id recup", req.body.id)
   const event = await eventModel.findById(req.body.id)
-
   res.json(event);
 });
 
@@ -75,10 +73,6 @@ router.get('/likeEvent', async function (req, res, next) {
   } catch (e) {
     // console.log(e);
   }
-
-  // console.log("VERIF POPULARITE EVENT", event.popularite)
-  // console.log("VERIF LIKE USER", user.favoris)
-
   res.json({ event: event.popularite, user: user.favoris });
 });
 
@@ -86,9 +80,6 @@ router.get('/likeEvent', async function (req, res, next) {
 // Route pour retrait de like :  ajouter l'id de l'utilisateur à la liste des likes de l'évènement et ajouter l'id du film au tableau de likes de l'utilisateur
 // TESTE POSTMAN : OK
 router.get('/unlikeEvent', async function (req, res, next) {
-
-  // console.log("event", req.query.idEvent)
-  // console.log("user", req.query.idUser)
 
   var idEvent = req.query.idEvent;
   var idUser = req.query.idUser;
@@ -121,9 +112,6 @@ router.get('/unlikeEvent', async function (req, res, next) {
   event = eventModel.findById(idEvent)
   user = userModel.findById(idUser)
 
-  // console.log("VERIF POPULARITE EVENT", event.popularite)
-  // console.log("VERIF LIKE USER", user.favoris)
-
   res.json({ event: event.popularite, user: user.favoris });
 });
 
@@ -149,49 +137,47 @@ router.get('/unlikeEvent', async function (req, res, next) {
 router.post('/addSortie', async function (req, res, next) {
 
   var idEvenement;
-  var idOrganisateur;
 
   if (req.body.evenementLie == undefined) {
-    idEvenement=0
+    idEvenement = 0
   } else {
-    idEvenement=req.body.evenementLie
+    idEvenement = req.body.evenementLie
   }
 
-
-
-  if (req.body.part!= undefined && req.body.part.length >1) {
+  if (req.body.part != undefined && req.body.part.length > 1) {
     var convives = req.body.part.split(",")
-    // console.log("convives",convives)
-  
-    var newSortie = new sortieModel ({
-     evenementLie: idEvenement,
-     organisateur: req.body.organisateur,
-     nomSortie: req.body.nomSortie,
-     image: req.body.image,
-     adresse: req.body.adresse,
-     cp: req.body.cp,
-     date_debut: req.body.debut,
-     date_fin: req.body.fin,
-     duree: req.body.duree,
-     type: req.body.type,
-     participants: convives
-   });
-  } else if (req.body.part!= undefined && req.body.part.length == 1) {
-      var newSortie = new sortieModel ({
-       evenementLie: idEvenement,
-       organisateur: req.body.organisateur,
-       nomSortie: req.body.nomSortie,
-       image: req.body.image,
-       adresse: req.body.adresse,
-       cp: req.body.cp,
-       date_debut: req.body.debut,
-       date_fin: req.body.fin,
-       duree: req.body.duree,
-       type: req.body.type,
-       participants: req.body.part
-     });
+
+    var newSortie = new sortieModel({
+      evenementLie: idEvenement,
+      organisateur: req.body.organisateur,
+      nomSortie: req.body.nomSortie,
+      image: req.body.image,
+      adresse: req.body.adresse,
+      cp: req.body.cp,
+      date_debut: req.body.debut,
+      date_fin: req.body.fin,
+      duree: req.body.duree,
+      type: req.body.type,
+      participants: convives
+    });
+  } else if (req.body.part != undefined && req.body.part.length == 1) {
+    var convives = req.body.part
+
+    var newSortie = new sortieModel({
+      evenementLie: idEvenement,
+      organisateur: req.body.organisateur,
+      nomSortie: req.body.nomSortie,
+      image: req.body.image,
+      adresse: req.body.adresse,
+      cp: req.body.cp,
+      date_debut: req.body.debut,
+      date_fin: req.body.fin,
+      duree: req.body.duree,
+      type: req.body.type,
+      participants: convives
+    });
   } else {
-    var newSortie = new sortieModel ({
+    var newSortie = new sortieModel({
       evenementLie: idEvenement,
       organisateur: req.body.organisateur,
       nomSortie: req.body.nomSortie,
@@ -204,27 +190,9 @@ router.post('/addSortie', async function (req, res, next) {
       type: req.body.type,
     });
   }
-  
-  // console.log("req.body.part", req.body.part)
-  // var convives = req.body.part.split(",")
-  // console.log("convives", convives)
-
-  // var newSortie = new sortieModel({
-  //   evenementLie: req.body.evenementLie,
-  //   organisateur: req.body.organisateur,
-  //   nomSortie: req.body.nomSortie,
-  //   image: req.body.image,
-  //   adresse: req.body.adresse,
-  //   cp: req.body.cp,
-  //   date_debut: req.body.debut,
-  //   date_fin: req.body.fin,
-  //   duree: req.body.duree,
-  //   type: req.body.type,
-  //   participants: convives
-  // });
 
   var sortie = await newSortie.save();
-  console.log("SORTIE CREEE", sortie)
+  // console.log("SORTIE CREEE", sortie)
 
   // LE CREATEUR EST EGALEMENT UN PARTICIPANT (FACON DE RECHERCHER POUR L'ECRAN PLANIFIER), DONC ON LUI AJOUTE L'ID SORTIE DANS SES SORTIES ET IDEM POUR LES SORTIES, AJOUT DE L'ID CREATEUR
   userModel.findOneAndUpdate(
@@ -251,22 +219,21 @@ router.post('/addSortie', async function (req, res, next) {
   );
 
   // POUR CHAQUE AMI, ON SE CONNECTE A SON PROFIL ET ON LUI AJOUTE L'ID DE LA SORTIE
-  for (var idAmiSortie of convives) {
-    userModel.findOneAndUpdate(
-      { _id: idAmiSortie },
-      { $push: { sorties: sortie._id } },
-      function (error, success) {
-        if (error) {
-          console.log("ERROR EVENT", error);
-        } else {
-          console.log("SUCCESS AMIS", success);
-        }
-      });
+  if (convives) {
+    for (var idAmiSortie of convives) {
+      userModel.findOneAndUpdate(
+        { _id: idAmiSortie },
+        { $push: { sorties: sortie._id } },
+        function (error, success) {
+          if (error) {
+            console.log("ERROR EVENT", error);
+          } else {
+            console.log("SUCCESS AMIS", success);
+          }
+        });
+    }
   }
-
-  AbortController()
-
-  res.render(sortie);
+  res.json(sortie);
 });
 
 
@@ -276,7 +243,7 @@ router.post('/addSortie', async function (req, res, next) {
 // LECTURE D'UNE SORTIE
 // TEST POSTMAN : OK
 router.post('/pullSortieDetaillee', async function (req, res, next) {
-  console.log("req post id recup", req.body.id)
+  // console.log("req post id recup", req.body.id)
   var sortie = await sortieModel.findById(req.body.id)
 
   var listAmisSortie = [];
@@ -285,9 +252,9 @@ router.post('/pullSortieDetaillee', async function (req, res, next) {
     // console.log("donneesAmis",donneesAmis)
     listAmisSortie.push(donneesAmis)
   }
-  console.log("listAmisSortie ", listAmisSortie)
+  // console.log("listAmisSortie ", listAmisSortie)
 
-  res.json({sortie, listAmisSortie});
+  res.json({ sortie, listAmisSortie });
 });
 
 
@@ -297,7 +264,7 @@ router.post('/pullSortieDetaillee', async function (req, res, next) {
 
 // RECUPERATION DES AMIS
 router.post('/pullFriendsList', async function (req, res, next) {
-  console.log("req post id recup", req.body.id)
+  // console.log("req post id recup", req.body.id)
   const user = await userModel.findById(req.body.id)
 
   var listAmis = [];
@@ -306,9 +273,9 @@ router.post('/pullFriendsList', async function (req, res, next) {
     // console.log("donneesAmis",donneesAmis)
     listAmis.push(donneesAmis)
   }
-  console.log("listAmis ", listAmis)
+  // console.log("listAmis ", listAmis)
 
-  res.json({listAmis});
+  res.json({ listAmis });
 });
 
 
@@ -322,9 +289,9 @@ router.post('/searchFriends', async function (req, res, next) {
   const resultatsRecherche = await userModel.find({ nom: strUcFirst(req.body.nom) })
 
   console.log()
-  console.log("INDEX.JS / NOM=>",resultatsRecherche[0].nom)
-  console.log("INDEX.JS / PRENOM=>",resultatsRecherche[0].prenom)
-  console.log("INDEX.JS / AVATAR URL=>",resultatsRecherche[0].avatar)
+  console.log("INDEX.JS / NOM=>", resultatsRecherche[0].nom)
+  console.log("INDEX.JS / PRENOM=>", resultatsRecherche[0].prenom)
+  console.log("INDEX.JS / AVATAR URL=>", resultatsRecherche[0].avatar)
   console.log()
 
   res.json(resultatsRecherche);
@@ -351,7 +318,7 @@ router.post('/pullUser', async function (req, res, next) {
 
   console.log(req.body.id)
   // const user = await userModel.findById( req.body.id )
-  const user = await userModel.findOne({_id: req.body.id})
+  const user = await userModel.findOne({ _id: req.body.id })
 
   var idUser = user.id
   var mesAmis = user.amis
@@ -367,7 +334,7 @@ router.post('/pullUser', async function (req, res, next) {
 
   // mes likes (OK)
   const mesLikes = await eventModel.find({ popularite: idUser })
-  console.log("mesLikes ",mesLikes)
+  // console.log("mesLikes ", mesLikes)
 
 
 
@@ -390,7 +357,7 @@ router.post('/pullUser', async function (req, res, next) {
     idDesSorties.push(listingsorties)
   }
 
-  console.log("idDesSorties: ", idDesSorties)
+  // console.log("idDesSorties: ", idDesSorties)
 
   var idDesSortiesConcatDoublons = []
 
@@ -421,15 +388,15 @@ router.post('/pullUser', async function (req, res, next) {
     var sortiesami = await sortieModel.findById(sorts)
     sortiesAmis.push(sortiesami)
   }
-  console.log("sortiesAmis: ", sortiesAmis)
+  // console.log("sortiesAmis: ", sortiesAmis)
 
   // VERIF DU TYPE ET S'IL FAUT AFFICHER OU NON A L'UTILISATEUR
   var sortiesAffichees = []
 
   for (var sortiees of sortiesAmis) {
-    console.log(sortiees.type)
+    // console.log(sortiees.type)
     if (sortiees.type != "privée") {
-      console.log("OPEN SORTIE")
+      // console.log("OPEN SORTIE")
       sortiesAffichees.push(sortiees)
     } else {
       for (var j = 0; j < sortiesUser.length; j++) {
@@ -444,10 +411,7 @@ router.post('/pullUser', async function (req, res, next) {
     }
   }
 
-
-
-  console.log("sortiesAffichees", sortiesAffichees)
-
+  // console.log("sortiesAffichees", sortiesAffichees)
 
   //   5. likes des amis : MEME LOGIQUE QUE POUR LA SORTIE
 
@@ -455,11 +419,11 @@ router.post('/pullUser', async function (req, res, next) {
   var amisLikes = []
   for (var rechamilikes of mesAmis) {
     var transamisLikes = await userModel.findById(rechamilikes)
-    console.log("rechamilikes", rechamilikes)
-    console.log("LIKES FOUND", transamisLikes)
+    // console.log("rechamilikes", rechamilikes)
+    // console.log("LIKES FOUND", transamisLikes)
     amisLikes.push(transamisLikes.favoris)
   }
-  console.log("amisLikes ", amisLikes)
+  // console.log("amisLikes ", amisLikes)
 
   //DEDOUBLONNEMENT
   var idDesLikesConcatDoublons = []
@@ -467,10 +431,10 @@ router.post('/pullUser', async function (req, res, next) {
   for (var i = 0; i < amisLikes.length; i++) {
     idDesLikesConcatDoublons = idDesLikesConcatDoublons.concat(amisLikes[i])
   }
-  console.log("idDesSortiesConcat", idDesLikesConcatDoublons)
+  // console.log("idDesSortiesConcat", idDesLikesConcatDoublons)
 
   var idDesLikesConcatSansDoublons = cleanArray(idDesLikesConcatDoublons);
-  console.log("idDesLikesConcatSansDoublons", idDesLikesConcatSansDoublons);
+  // console.log("idDesLikesConcatSansDoublons", idDesLikesConcatSansDoublons);
 
   //RECHERCHE DES ELEMENTS EVENEMENTS DES IDS DEDOUBLONNES DES AMIS
   var LikesDesAmis = []
@@ -478,11 +442,9 @@ router.post('/pullUser', async function (req, res, next) {
     var likessami = await eventModel.findById(likess)
     LikesDesAmis.push(likessami)
   }
-  console.log("LikesDesAmis", LikesDesAmis)
+  // console.log("LikesDesAmis", LikesDesAmis)
 
-
-
-  res.json({user, mesSorties, mesLikes, sortiesAffichees, LikesDesAmis})
+  res.json({ user, mesSorties, mesLikes, sortiesAffichees, LikesDesAmis })
 
 });
 
