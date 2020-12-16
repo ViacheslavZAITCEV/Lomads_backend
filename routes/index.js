@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 var userModel = require('../models/users')
 var eventModel = require('../models/events')
 var sortieModel = require('../models/sorties')
+var friendRequestModel = require('../models/friendRequest')
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -316,18 +317,55 @@ router.post('/pullFriendsList', async function (req, res, next) {
 // CHERCHER DES AMIS 
 router.post('/searchFriends', async function (req, res, next) {
 
+  try{
   // fonction pour mettre une majuscule à toute première lettre de recherche, comme dans la BDD
   function strUcFirst(a) { return (a + '').charAt(0).toUpperCase() + a.substr(1); }
 
   const resultatsRecherche = await userModel.find({ nom: strUcFirst(req.body.nom) })
+  // const resultatsRecherche = await userModel.find({ nom: strUcFirst(req.body.nom) } $or {prenom : strUcFirst(req.body.nom)})
 
   console.log()
   console.log("INDEX.JS / NOM=>",resultatsRecherche[0].nom)
   console.log("INDEX.JS / PRENOM=>",resultatsRecherche[0].prenom)
   console.log("INDEX.JS / AVATAR URL=>",resultatsRecherche[0].avatar)
   console.log()
-
+  
   res.json(resultatsRecherche);
+  }catch(e){
+    console.log(e)
+  }
+});
+
+
+
+
+// Route creation Demande  amis 
+router.post('/demandeFriend', async function (req, res, next) {
+  
+  console.log();
+  console.log("INDEX.JS, route: /demandeFriend");
+  console.log("req.body.token=", req.body.token);
+  console.log("req.body.idAmi=", req.body.idAmi);
+
+  var result = {status : false}
+  try{
+    var user = await userModel.find({token : req.body.token});
+    const newDemande = new friendRequestModel({
+    demandeur: user._id,
+    receveur: req.body.idAmi,
+    statut: true
+    })
+  
+    result.response = await newDemande.save();
+    result.status = true;
+  }catch(e){
+    result.error = e;
+    console.log(e);
+  }
+  console.log("result=",result);
+  console.log()
+
+  res.json(result);
 
 });
 
