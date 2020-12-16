@@ -324,12 +324,6 @@ router.post('/searchFriends', async function (req, res, next) {
   const resultatsRecherche = await userModel.find({ nom: strUcFirst(req.body.nom) })
   // const resultatsRecherche = await userModel.find({ nom: strUcFirst(req.body.nom) } $or {prenom : strUcFirst(req.body.nom)})
 
-  console.log()
-  console.log("INDEX.JS / NOM=>",resultatsRecherche[0].nom)
-  console.log("INDEX.JS / PRENOM=>",resultatsRecherche[0].prenom)
-  console.log("INDEX.JS / AVATAR URL=>",resultatsRecherche[0].avatar)
-  console.log()
-  
   res.json(resultatsRecherche);
   }catch(e){
     console.log(e)
@@ -349,11 +343,12 @@ router.post('/demandeFriend', async function (req, res, next) {
 
   var result = {status : false}
   try{
-    var user = await userModel.find({token : req.body.token});
+    var user = await userModel.findOne({token : req.body.token});
+    console.log(user);
     const newDemande = new friendRequestModel({
-    demandeur: user._id,
-    receveur: req.body.idAmi,
-    statut: true
+      demandeur: user._id,
+      receveur: req.body.idAmi,
+      statut: true
     })
   
     result.response = await newDemande.save();
@@ -370,6 +365,33 @@ router.post('/demandeFriend', async function (req, res, next) {
 });
 
 
+
+
+
+// Route recherche les Demandes  d'amis 
+router.post('/findDemandes', async function (req, res, next) {
+  
+  console.log();
+  console.log("INDEX.JS, route: /findDemandes");
+  console.log("req.body.token=", req.body.token);
+
+  var result = {status : false}
+
+  try{
+    var user = await userModel.find({token : req.body.token});
+    
+    result.response = await friendRequestModel.find({});
+    result.status = true;
+  }catch(e){
+    result.error = e;
+    console.log(e);
+  }
+  console.log("result=",result);
+  console.log()
+
+  res.json(result);
+
+});
 
 
 
