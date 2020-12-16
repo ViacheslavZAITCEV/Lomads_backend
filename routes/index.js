@@ -343,7 +343,11 @@ router.post('/demandeFriend', async function (req, res, next) {
 
   var result = {status : false}
   try{
-    var user = await userModel.find({token : req.body.token});
+    console.log("TOKEN=>>>>>><",req.body.token)
+    var user = await userModel.findOne({token : req.body.token});
+    if (user){
+      console.log("USER ID =>>>>>>",user)
+    }
     const newDemande = new friendRequestModel({
     demandeur: user._id,
     receveur: req.body.idAmi,
