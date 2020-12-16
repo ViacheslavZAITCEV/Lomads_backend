@@ -277,7 +277,7 @@ router.post('/addSortie', async function (req, res, next) {
 // TEST POSTMAN : OK
 router.post('/pullSortieDetaillee', async function (req, res, next) {
   console.log("req post id recup", req.body.id)
-  const sortie = await sortieModel.findById(req.body.id)
+  var sortie = await sortieModel.findById(req.body.id)
 
   var listAmisSortie = [];
   for (var amis of sortie.participants) {
@@ -287,7 +287,7 @@ router.post('/pullSortieDetaillee', async function (req, res, next) {
   }
   console.log("listAmisSortie ", listAmisSortie)
 
-  res.json(sortie, listAmisSortie);
+  res.json({sortie, listAmisSortie});
 });
 
 
