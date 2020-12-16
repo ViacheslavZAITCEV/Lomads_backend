@@ -323,7 +323,6 @@ router.post('/searchFriends', async function (req, res, next) {
 
   const resultatsRecherche = await userModel.find({ nom: strUcFirst(req.body.nom) })
   // const resultatsRecherche = await userModel.find({ nom: strUcFirst(req.body.nom) } $or {prenom : strUcFirst(req.body.nom)})
-  
   res.json(resultatsRecherche);
   }catch(e){
     console.log(e)
@@ -343,15 +342,12 @@ router.post('/demandeFriend', async function (req, res, next) {
 
   var result = {status : false}
   try{
-    console.log("TOKEN=>>>>>><",req.body.token)
     var user = await userModel.findOne({token : req.body.token});
-    if (user){
-      console.log("USER ID =>>>>>>",user)
-    }
+    console.log(user);
     const newDemande = new friendRequestModel({
-    demandeur: user._id,
-    receveur: req.body.idAmi,
-    statut: true
+      demandeur: user._id,
+      receveur: req.body.idAmi,
+      statut: true
     })
   
     result.response = await newDemande.save();
@@ -368,6 +364,33 @@ router.post('/demandeFriend', async function (req, res, next) {
 });
 
 
+
+
+
+// Route recherche les Demandes  d'amis 
+router.post('/findDemandes', async function (req, res, next) {
+  
+  console.log();
+  console.log("INDEX.JS, route: /findDemandes");
+  console.log("req.body.token=", req.body.token);
+
+  var result = {status : false}
+
+  try{
+    var user = await userModel.findOne({token : req.body.token});
+    console.log("ROUTE FIND DEMANDES / USER._ID=>>>>>>>",user._id)
+    result.response = await friendRequestModel.find({receveur:user._id});
+    result.status = true;
+  }catch(e){
+    result.error = e;
+    console.log(e);
+  }
+  console.log("result=",result);
+  console.log()
+
+  res.json(result);
+
+});
 
 
 
