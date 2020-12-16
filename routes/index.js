@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 
 var userModel = require('../models/users')
 var eventModel = require('../models/events')
-var sortieModel = require('../models/sorties')
+var sortieModel = require('../models/sorties');
+const { response } = require('express');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -321,14 +322,8 @@ router.post('/searchFriends', async function (req, res, next) {
 
   const resultatsRecherche = await userModel.find({ nom: strUcFirst(req.body.nom) })
 
-  console.log()
-  console.log("INDEX.JS / NOM=>",resultatsRecherche[0].nom)
-  console.log("INDEX.JS / PRENOM=>",resultatsRecherche[0].prenom)
-  console.log("INDEX.JS / AVATAR URL=>",resultatsRecherche[0].avatar)
-  console.log()
-
-  res.json(resultatsRecherche);
-
+  res.json(resultatsRecherche)
+  
 });
 
 
