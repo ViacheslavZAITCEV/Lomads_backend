@@ -296,13 +296,6 @@ router.post('/searchFriends', async function (req, res, next) {
   }
 });
 
-  console.log()
-  console.log("INDEX.JS / NOM=>", resultatsRecherche[0].nom)
-  console.log("INDEX.JS / PRENOM=>", resultatsRecherche[0].prenom)
-  console.log("INDEX.JS / AVATAR URL=>", resultatsRecherche[0].avatar)
-
-
-
 // Route creation Demande  amis 
 router.post('/demandeFriend', async function (req, res, next) {
   
