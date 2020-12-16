@@ -308,7 +308,7 @@ router.post('/pullFriendsList', async function (req, res, next) {
   }
   console.log("listAmis ", listAmis)
 
-  res.json(listAmis);
+  res.json({listAmis});
 });
 
 
