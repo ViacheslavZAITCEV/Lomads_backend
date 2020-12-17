@@ -553,25 +553,25 @@ router.post('/pullUser', async function (req, res, next) {
   // console.log("sortiesAmis: ", sortiesAmis)
 
   // VERIF DU TYPE ET S'IL FAUT AFFICHER OU NON A L'UTILISATEUR
-  var sortiesAffichees = []
+  // var sortiesAffichees = []
 
-  for (var sortiees of sortiesAmis) {
-    // console.log(sortiees.type)
-    if (sortiees.type != "privée") {
-      // console.log("OPEN SORTIE")
-      sortiesAffichees.push(sortiees)
-    } else {
-      for (var j = 0; j < sortiesUser.length; j++) {
-        if (sortiees.id == sortiesUser[j]) {
-          console.log("id ami", sortiees.id, "========= id user", sortiesUser[j])
-          console.log("privée mais OK")
-          sortiesAffichees.push(sortiees)
-        } else {
-          console.log("SOIREE PRIVEE", "id ami", sortiees.id, "========= id user", sortiesUser[j])
-        }
-      }
-    }
-  }
+  // for (var sortiees of sortiesAmis) {
+  //   // console.log(sortiees.type)
+  //   if (sortiees.type != "privée") {
+  //     // console.log("OPEN SORTIE")
+  //     sortiesAffichees.push(sortiees)
+  //   } else {
+  //     for (var j = 0; j < sortiesUser.length; j++) {
+  //       if (sortiees.id == sortiesUser[j]) {
+  //         console.log("id ami", sortiees.id, "========= id user", sortiesUser[j])
+  //         console.log("privée mais OK")
+  //         sortiesAffichees.push(sortiees)
+  //       } else {
+  //         console.log("SOIREE PRIVEE", "id ami", sortiees.id, "========= id user", sortiesUser[j])
+  //       }
+  //     }
+  //   }
+  // }
 
   // console.log("sortiesAffichees", sortiesAffichees)
 
@@ -606,7 +606,7 @@ router.post('/pullUser', async function (req, res, next) {
   }
   // console.log("LikesDesAmis", LikesDesAmis)
 
-  res.json({ user, mesSorties, mesLikes, sortiesAffichees, LikesDesAmis })
+  res.json({ user, mesSorties, mesLikes, sortiesAmis, LikesDesAmis })
 
 });
 
