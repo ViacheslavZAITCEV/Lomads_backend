@@ -387,6 +387,7 @@ router.post('/accepteDemande', async function (req, res, next) {
       {token : req.body.token}, 
       {$push : {amis : idAmi} }
     );
+    console.log(user1);
     var idUser = user1._id;
     var user2 = await userModel.findOneAndUpdate(
       {id : idAmis}, 
