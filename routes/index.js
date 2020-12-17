@@ -627,6 +627,29 @@ router.post('/pullUser', async function (req, res, next) {
 
 
 
+// ---------------------------------------ADMINISTRATION DE LA BDD VIA POSTMAN------------------------------------------
+
+
+router.get('/delUndefinedFromPopularite', async function (req, res, next) {
+
+  var events = await eventModel.find();
+
+  var compt = 0;
+  for (let even of events){
+    var newPopularite = [];
+    await eventModel.updateOne({id : even._id}, {popularite : newPopularite})
+    compt ++;
+    
+  }
+
+  console.log('new base de donne compt', compt , ' evenements');
+
+
+});
+
+
+
+
 
 
 
