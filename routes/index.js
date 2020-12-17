@@ -317,43 +317,43 @@ router.post('/pullFriendsList', async function (req, res, next) {
 // CHERCHER DES AMIS 
 router.post('/searchFriends', async function (req, res, next) {
 
-  try{
-  // fonction pour mettre une majuscule à toute première lettre de recherche, comme dans la BDD
-  function strUcFirst(a) { return (a + '').charAt(0).toUpperCase() + a.substr(1); }
+  try {
+    // fonction pour mettre une majuscule à toute première lettre de recherche, comme dans la BDD
+    function strUcFirst(a) { return (a + '').charAt(0).toUpperCase() + a.substr(1); }
 
-  const resultatsRecherche = await userModel.find({ nom: strUcFirst(req.body.nom) })
-  // const resultatsRecherche = await userModel.find({ nom: strUcFirst(req.body.nom) } $or {prenom : strUcFirst(req.body.nom)})
-  res.json(resultatsRecherche);
-  }catch(e){
+    const resultatsRecherche = await userModel.find({ nom: strUcFirst(req.body.nom) })
+    // const resultatsRecherche = await userModel.find({ nom: strUcFirst(req.body.nom) } $or {prenom : strUcFirst(req.body.nom)})
+    res.json(resultatsRecherche);
+  } catch (e) {
     console.log(e)
   }
 });
 
 // Route creation Demande  amis 
 router.post('/demandeFriend', async function (req, res, next) {
-  
+
   console.log();
   console.log("INDEX.JS, route: /demandeFriend");
   console.log("req.body.token=", req.body.token);
   console.log("req.body.idAmi=", req.body.idAmi);
 
-  var result = {status : false}
-  try{
-    var user = await userModel.findOne({token : req.body.token});
+  var result = { status: false }
+  try {
+    var user = await userModel.findOne({ token: req.body.token });
     console.log(user);
     const newDemande = new friendRequestModel({
       demandeur: user._id,
       receveur: req.body.idAmi,
       statut: true
     })
-  
+
     result.response = await newDemande.save();
     result.status = true;
-  }catch(e){
+  } catch (e) {
     result.error = e;
     console.log(e);
   }
-  console.log("result=",result);
+  console.log("result=", result);
 
   res.json(result);
 
@@ -365,15 +365,15 @@ router.post('/demandeFriend', async function (req, res, next) {
 
 // Route recherche les Demandes  d'amis 
 router.post('/findDemandes', async function (req, res, next) {
-  
+
   console.log();
   console.log("INDEX.JS, route: /findDemandes");
   console.log("req.body.token=", req.body.token);
 
-  var result = {status : false}
+  var result = { status: false }
 
   // try{
-    var user = await userModel.findOne({token : req.body.token});
+  var user = await userModel.findOne({ token: req.body.token });
   //   console.log("ROUTE FIND DEMANDES / USER._ID=>>>>>>>",user._id)
   //   result.response = await friendRequestModel.find({receveur:user._id});
   //   result.status = true;
@@ -384,23 +384,23 @@ router.post('/findDemandes', async function (req, res, next) {
   // console.log("result=",result);
   // console.log()
 
-  var listeDesDemandes = await friendRequestModel.find({receveur : user._id})
+  var listeDesDemandes = await friendRequestModel.find({ receveur: user._id })
 
-    var idDeMesDemandeurs=[]
-      
-    for (var listId of listeDesDemandes) {
-      idDeMesDemandeurs.push(listId.demandeur)
-    }
+  var idDeMesDemandeurs = []
 
-    console.log("idDeMesDemandeurs",idDeMesDemandeurs)
+  for (var listId of listeDesDemandes) {
+    idDeMesDemandeurs.push(listId.demandeur)
+  }
 
-    var demandeurs=[]
-    for (var futursAmis of idDeMesDemandeurs) {
-      var liteDesDemandes = await userModel.findById(futursAmis)
-      demandeurs.push(liteDesDemandes)
-    }
+  console.log("idDeMesDemandeurs", idDeMesDemandeurs)
 
-    console.log("demandeurs",demandeurs)
+  var demandeurs = []
+  for (var futursAmis of idDeMesDemandeurs) {
+    var liteDesDemandes = await userModel.findById(futursAmis)
+    demandeurs.push(liteDesDemandes)
+  }
+
+  console.log("demandeurs", demandeurs)
 
   res.json(demandeurs);
 
@@ -408,31 +408,31 @@ router.post('/findDemandes', async function (req, res, next) {
 
 // Route recherche les Demandes  d'amis 
 router.post('/accepteDemande', async function (req, res, next) {
-  
+
   console.log();
   console.log("INDEX.JS, route: /findDemandes");
   console.log("req.body.token=", req.body.token);
 
   var idAmi = req.body.idDemandeur;
-  var result = {status : false}
-  try{
+  var result = { status: false }
+  try {
     var user1 = await userModel.findOneAndUpdate(
-      {token : req.body.token}, 
-      {$push : {amis : idAmi} }
+      { token: req.body.token },
+      { $push: { amis: idAmi } }
     );
     console.log(user1);
     var idUser = user1._id;
     var user2 = await userModel.findOneAndUpdate(
-      {id : idAmis}, 
-      {$push : {amis : idUser}}
+      { id: idAmis },
+      { $push: { amis: idUser } }
     );
-    var remove = await friendRequestModel.remove({receveur : idUser, demandeur: idAmi })
+    var remove = await friendRequestModel.remove({ receveur: idUser, demandeur: idAmi })
     result.status = true;
-  }catch(e){
+  } catch (e) {
     result.error = e;
     console.log(e);
   }
-  console.log("result=",result);
+  console.log("result=", result);
   console.log()
 
   res.json(result);
@@ -441,23 +441,23 @@ router.post('/accepteDemande', async function (req, res, next) {
 
 // Route suppresion une Demande  d'amis 
 router.post('/delDemande', async function (req, res, next) {
-  
+
   console.log();
   console.log("INDEX.JS, route: /findDemandes");
   console.log("req.body.token=", req.body.token);
 
   var idAmi = req.body.idDemandeur;
-  var result = {status : false}
-  try{
-    var user1 = await userModel.findOne({token : req.body.token});
+  var result = { status: false }
+  try {
+    var user1 = await userModel.findOne({ token: req.body.token });
     var idUser = user1._id;
-    result.response = await friendRequestModel.remove({receveur : idUser, demandeur: idAmi})
+    result.response = await friendRequestModel.remove({ receveur: idUser, demandeur: idAmi })
     result.status = true;
-  }catch(e){
+  } catch (e) {
     result.error = e;
     console.log(e);
   }
-  console.log("result=",result);
+  console.log("result=", result);
   console.log()
 
   res.json(result);
@@ -528,29 +528,41 @@ router.post('/pullUser', async function (req, res, next) {
   }
   console.log("idDesSortiesConcat: ", typeof (idDesSortiesConcatDoublons))
 
+  console.log("idDesSortiesConcatDoublons: ", idDesSortiesConcatDoublons);
 
   // SUPPRESSION DE DOUBLONS
   function cleanArray(array) {
-    var i, j, len = array.length, out = [], obj = {};
-    for (i = 0; i < len; i++) {
-      obj[array[i]] = 0;
+    var idDesSortiesConcatSansDoublons = []
+    // var i, j, len = array.length, out = [], obj = {};
+    // for (i = 0; i < len; i++) {
+    //   obj[array[i]] = 0;
+    // }
+    // for (j in obj) {
+    //   out.push(j);
+    // }
+    for (var i = 0; i < array.length; i++) {
+
+      if (idDesSortiesConcatSansDoublons.indexOf(array[i]) == -1) {
+        idDesSortiesConcatSansDoublons.push(array[i])
+      }
     }
-    for (j in obj) {
-      out.push(j);
-    }
-    return out;
+    return idDesSortiesConcatSansDoublons;
   }
 
   var idDesSortiesConcatSansDoublons = cleanArray(idDesSortiesConcatDoublons);
   console.log("idDesSortiesConcatSansDoublons: ", idDesSortiesConcatSansDoublons);
 
+
+
   // RECUP DES INFOS SORTIES
   var sortiesAmis = []
   for (var sorts of idDesSortiesConcatSansDoublons) {
     var sortiesami = await sortieModel.findById(sorts)
-    sortiesAmis.push(sortiesami)
+    if (sortiesami !== null) {
+      sortiesAmis.push(sortiesami)
+      console.log("sortiesAmis: ", sortiesAmis)
+    }
   }
-  // console.log("sortiesAmis: ", sortiesAmis)
 
   // VERIF DU TYPE ET S'IL FAUT AFFICHER OU NON A L'UTILISATEUR
   // var sortiesAffichees = []
@@ -581,9 +593,11 @@ router.post('/pullUser', async function (req, res, next) {
   var amisLikes = []
   for (var rechamilikes of mesAmis) {
     var transamisLikes = await userModel.findById(rechamilikes)
-    // console.log("rechamilikes", rechamilikes)
-    // console.log("LIKES FOUND", transamisLikes)
-    amisLikes.push(transamisLikes.favoris)
+    if (transamisLikes !== null) {
+      // console.log("rechamilikes", rechamilikes)
+      // console.log("LIKES FOUND", transamisLikes)
+      amisLikes.push(transamisLikes.favoris)
+    }
   }
   // console.log("amisLikes ", amisLikes)
 
@@ -602,7 +616,9 @@ router.post('/pullUser', async function (req, res, next) {
   var LikesDesAmis = []
   for (var likess of idDesLikesConcatSansDoublons) {
     var likessami = await eventModel.findById(likess)
+    if (likessami !== null) {
     LikesDesAmis.push(likessami)
+    }
   }
   // console.log("LikesDesAmis", LikesDesAmis)
 
