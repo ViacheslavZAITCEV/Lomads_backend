@@ -263,6 +263,8 @@ router.post('/pullSortieDetaillee', async function (req, res, next) {
 
 
 
+
+
 // RECUPERATION DES AMIS
 router.post('/pullFriendsList', async function (req, res, next) {
   // console.log("req post id recup", req.body.id)
