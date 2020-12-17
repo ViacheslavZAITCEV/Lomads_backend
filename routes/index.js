@@ -155,8 +155,8 @@ router.post('/addSortie', async function (req, res, next) {
       image: req.body.image,
       adresse: req.body.adresse,
       cp: req.body.cp,
-      date_debut: req.body.debut,
-      date_fin: req.body.fin,
+      date_debut: req.body.date_debut,
+      date_fin: req.body.date_fin,
       duree: req.body.duree,
       type: req.body.type,
       participants: convives
@@ -171,8 +171,8 @@ router.post('/addSortie', async function (req, res, next) {
       image: req.body.image,
       adresse: req.body.adresse,
       cp: req.body.cp,
-      date_debut: req.body.debut,
-      date_fin: req.body.fin,
+      date_debut: req.body.date_debut,
+      date_fin: req.body.date_fin,
       duree: req.body.duree,
       type: req.body.type,
       participants: convives
@@ -185,8 +185,8 @@ router.post('/addSortie', async function (req, res, next) {
       image: req.body.image,
       adresse: req.body.adresse,
       cp: req.body.cp,
-      date_debut: req.body.debut,
-      date_fin: req.body.fin,
+      date_debut: req.body.date_debut,
+      date_fin: req.body.date_fin,
       duree: req.body.duree,
       type: req.body.type,
     });
@@ -259,8 +259,39 @@ router.post('/pullSortieDetaillee', async function (req, res, next) {
 });
 
 
+// NE PLUS PARTICIPER A UNE SORTIE
 
+router.post('/desinscription', async function (req, res, next) {
 
+  var idUser = req.body.idUser
+  var idSortie = req.body.idSortie
+
+  userModel.findOneAndUpdate(
+    { _id: idUser },
+    { $pull: { sorties: idSortie } },
+    function (error, success) {
+      if (error) {
+        console.log("ERROR EVENT", error);
+      } else {
+        console.log("SUCCESS USER", success);
+      }
+    });
+
+  sortieModel.findOneAndUpdate(
+    { _id: idSortie },
+    { $pull: { participants: idUser } },
+    function (error, success) {
+      if (error) {
+        console.log("ERROR EVENT", error);
+      } else {
+        console.log("SUCCESS PUSH AMIS SORTIE", success);
+      }
+    }
+  );
+
+  res.json()
+
+});
 
 
 
