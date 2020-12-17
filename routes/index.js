@@ -385,12 +385,12 @@ router.post('/accepteDemande', async function (req, res, next) {
   try{
     var user1 = await userModel.findOneAndUpdate(
       {token : req.body.token}, 
-      {$push : {idAmi}}
+      {$push : {amis : idAmi} }
     );
     var idUser = user1._id;
     var user2 = await userModel.findOneAndUpdate(
       {id : idAmis}, 
-      {$push : {idUser}}
+      {$push : {amis : idUser}}
     );
     var remove = await friendRequestModel.remove({receveur : idUser, demandeur: idAmi })
     result.status = true;
