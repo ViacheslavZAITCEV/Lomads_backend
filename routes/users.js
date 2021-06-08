@@ -605,18 +605,18 @@ async function deleteUserFromApp (user){
 
     // delFrends from mes Amis
     // version 1
-    for (var ami of user.amis){
-      await users.updateOne({'id' : ami.id}, {$pull : {amis : user.id}});
-    }
+    // for (var ami of user.amis){
+    //   await users.updateOne({'id' : ami.id}, {$pull : {amis : user.id}});
+    // }
 
     // version 2
     // await users.updateMany({amis : user.id }, {$pull : {amis : user.id}});
     
 
     // supprimer id d'user des conversations
-    for (var disc of user.conversations){
-      await conversations.updateOne({'id' : disc.id},  {$pull : {auteur : user.id}} );
-    }
+    // for (var disc of user.conversations){
+    //   await conversations.updateOne({'id' : disc.id},  {$pull : {auteur : user.id}} );
+    // }
   }
   
 

@@ -14,7 +14,7 @@ var lieuxDatesSchema = mongoose.Schema({
 var eventSchema = mongoose.Schema({
     nom: String,
     type: String,
-    categories: [String],
+    // categories: [String],
     description: String,
     image: String,
     image_public_id: String,

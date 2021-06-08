@@ -476,7 +476,7 @@ router.post('/pullUser', async function (req, res, next) {
   //   3. mes likes : grâce aux ids favoris stockés dans son profil, je les connecte par un for...of à  la collection events pour chercher les infos evenements
 
 
-  console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ON COMMENCE ICI >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+  // console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ON COMMENCE ICI >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 
   console.log(req.body.id)
   // const user = await userModel.findById( req.body.id )

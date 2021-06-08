@@ -8,13 +8,13 @@ var options = {
  };
 
 // --------------------- BDD -----------------------------------------------------
-mongoose.connect('mongodb+srv://teamGoWizMe:xdGu0Lo0XyuATGtK@cluster0.ahojw.mongodb.net/GoWizMe?retryWrites=true&w=majority',
+mongoose.connect(process.env.MONGO_DB,
    options,
    function(err) {
     if (err) {
       console.log(`error, failed to connect to the database because --> ${err}`);
     } else {
-      console.info('*** Database GoWizMe connection : Success ***');
+      console.info('*** Database Lomads connection : Success ***');
     }
    }
 );
