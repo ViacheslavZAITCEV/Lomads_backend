@@ -222,33 +222,20 @@ router.post('/update', async function(req, res, next) {
 });
 
 /* -----------------  */
-/* POST users/updatePrefs   */
-router.post('/updatePrefs', async function(req, res, next) {
+/* POST users/pullUsers   */
+router.get('/pullUsers', async function(req, res, next) {
 
-  console.log('Route updatePrefs');
-  var idPrefs = req.body.idPref;
-  var preferences = JSON.parse(req.body.preferences);
-  var token = req.body.token;
-  console.log('token = ', token);
-  console.log('prefs = ', preferences);
+  console.log('Route pullUsers');
   var response = {response : false};
   
-  var oldUser = await getUser({token});
-  if (oldUser === null){
-    response.error = 'wrong token';
+  var usersBD = await getUsers();
+  if (usersBD === null){
+    response.error = 'BD is clean';
   } else {
-    var resBD;
-    if (token){
-      resBD = await updateUserPreferences(token, preferences);
-      console.log("resBD=", resBD);
-    }
-    if ( ! resBD.status ){
-      response.error = resBD;
-    }else{
-      response.response = true;
-      response.token = token;
-    }
+    response.response = true;
+    response.users = usersBD;
   }
+  console.log('response', response)
   res.json(response);
 });
 
@@ -416,6 +403,17 @@ async function getUser(obj){
   try{
     console.log('function users/getUser, requet=', obj);
     reponse = users.findOne(obj);
+  }catch(e){
+    console.log(e);
+    reponse = e;
+  }
+  return reponse;
+}
+
+async function getUsers(){
+  var reponse;
+  try{
+    reponse = users.find();
   }catch(e){
     console.log(e);
     reponse = e;

@@ -4,8 +4,6 @@ const mongoose = require('mongoose');
 
 var userModel = require('../models/users')
 var eventModel = require('../models/events')
-var sortieModel = require('../models/sorties')
-var friendRequestModel = require('../models/friendRequest')
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
