@@ -20,6 +20,15 @@ router.get('/pullEvents', async function (req, res, next) {
 });
 
 
+
+router.post('putEvent', async (req, res, next)=>{
+  const response = { response: false, error: 'init'};
+  // const newEvent = 
+
+
+  res.json(response)
+})
+
 // Route pour récupérer un évènement spécifiquement --> SCREEN de la carte évènement détaillée
 // TESTE POSTMAN : OK
 router.post('/pullEventDetaille', async function (req, res, next) {

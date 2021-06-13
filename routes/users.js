@@ -63,25 +63,17 @@ router.post('/sign-up', async function(req, res, next) {
         prenom : req.body.prenom, 
         email : email, 
         password : req.body.password,
-        ville :  req.body.ville});
+      });
       console.log('newUser =', newUser);
       
       if( newUser.status){
 
-        // on prepare la reponse pour frontend
-        response.response = true;
-        response.token = newUser.user.token;
-        response.nom = newUser.user.nom;
-        response.prenom =  newUser.user.prenom;
-        response.avatar = newUser.user.avatar;
-        response.ville  = newUser.user.ville;
-        response.preferences  = newUser.user.preferences;
-        response.groupes  = newUser.user.groupes;
-        response.favoris  = newUser.user.favoris;
-        response.sorties  = newUser.user.sorties;
-        response.amis  = newUser.user.amis;
-        response.confidentialite  = newUser.user.confidentialite;
-        response.age = newUser.user.age;
+        // preapation la reponse pour frontend
+        
+        response = newUser
+        response.user.mot_de_passe=undefined
+        response.user.salt=undefined
+
       }else{
         response.error = 'error of BD: ' + newUser.error;
       }
@@ -116,24 +108,16 @@ router.post('/sign-in', async function(req, res, next) {
 
     } else if (userBD.mot_de_passe === SHA256(req.body.password + userBD.salt).toString(encBase64) ) {
       // password : SHA256(obj.password + salt).toString(encBase64),
-        response.response = true;
-        response.token = userBD.token;
-        response.nom = userBD.nom;
-        response.prenom =  userBD.prenom;
-        response.avatar = userBD.avatar;
-        response.ville  = userBD.ville;
-        response.preferences  = userBD.preferences;
-        response.groupes  = userBD.groupes;
-        response.favoris  = userBD.favoris;
-        response.sorties  = userBD.sorties;
-        response.amis  = userBD.amis;
-        response.confidentialite  = userBD.confidentialite;
-        response.age = userBD.age;
+      
+      userBD.mot_de_passe = undefined
+      userBD.salt = undefined
+      response.user = userBD
+      response.response = true;
 
-      }else{
-        response.error = 'wrong password';
-      }
+    }else{
+      response.error = 'wrong password';
     }
+  }
   res.json(response);
 });
 
@@ -196,16 +180,23 @@ router.post('/getUser', async function(req, res, next) {
 router.post('/update', async function(req, res, next) {
 
   console.log('Route update');
+  console.log('body', req.body);
   var token = req.body.token;
   console.log('token = ', token);
   var response = {response : false};
   
   var oldUser = await getUser({token});
+  let userReact = JSON.parse(req.body.userJSON)
+  userReact.email = userReact.email.toLowerCase()
+  const addressUser = await getUser({email : userReact.email })
   if (oldUser === null){
     response.error = 'wrong token';
+  } else if (addressUser !== null && addressUser.email !== oldUser.email) {
+    response.error = 'email is used';
+    response.user = oldUser;
   } else {
-
-    var updetedUser = await updateUser(oldUser , req.body);
+    console.log('userReact = ', userReact);
+    var updetedUser = await updateUser(oldUser , userReact);
     console.log('updetedUser=', updetedUser)
 
     var resBD = await updateUserByToken(token, updetedUser);
@@ -213,11 +204,14 @@ router.post('/update', async function(req, res, next) {
 
     if ( ! resBD.status ){
       response.error = resBD;
+      response.user = oldUser;
     }else{
       response.response = true;
-      response.token = token;
+      response.user = updetedUser;
+
     }
   }
+  console.log('response=', response)
   res.json(response);
 });
 
@@ -229,8 +223,8 @@ router.get('/pullUsers', async function(req, res, next) {
   var response = {response : false};
   
   var usersBD = await getUsers();
-  if (usersBD === null){
-    response.error = 'BD is clean';
+  if (usersBD === null || usersBD === undefined){
+    response.error = 'BD is empty';
   } else {
     response.response = true;
     response.users = usersBD;
@@ -373,24 +367,6 @@ router.get('/renderUsersAleatoires', async function(req, res, next) {
 });
 
 
-
-/* -----------------  */
-/* GET users/remplirAmis   */
-/* Comleter la base de donnée d'utilisateur */
-// router.get('/remplirAmis', async function(req, res, next) {
-//   var groupAmiParis = await users.find({ville : 'Paris'});
-//   console.log('groupAmiParis=', groupAmiParis);
-//   var amisParis = [];
-//   for (var ami of groupAmiParis){
-//     ami.amis = amisParis;
-//     amisParis.push(ami.id);
-//   }
-//   console.log('changement est passee. groupAmiParis=', groupAmiParis);
-//   var reponse = await users.updateMany({ville : 'Paris'}, amisParis);
-//   res.json(reponse);
-// });
-
-
 //--------------------------------------------------
 //
 //          - = FUNCTIONS = -
@@ -411,9 +387,17 @@ async function getUser(obj){
 }
 
 async function getUsers(){
-  var reponse;
+  var reponse = [];
   try{
-    reponse = users.find();
+    allUsers = await users.find();
+    allUsers.forEach( user =>{
+      reponse.push({
+        nom : user.nom,
+        prenom : user.prenom,
+        avatar : user.avatar,
+        events : user.events,
+      })
+    })
   }catch(e){
     console.log(e);
     reponse = e;
@@ -432,17 +416,6 @@ async function updateUserByToken(token, updatedUser){
   }
   return reponse;
 
-}
-async function updateUserPreferences(token, prefs){
-  var reponse = {status : false};
-  try{
-    reponse.user = await users.updateOne({token}, {preferences : prefs});
-    reponse.status = true;
-  }catch(e){
-    console.log(e);
-    reponse.error = e;
-  }
-  return reponse;
 }
 
 async function deleteOne(token){
@@ -469,38 +442,13 @@ async function createUser(obj){
   var newUser = new users ({
     salt : salt,
     token : uid2(32),
-    nom : obj.nom,
+    nom : obj.nom ? obj.nom : "",
     prenom : obj.prenom,
     email : obj.email,
     mot_de_passe : SHA256(obj.password + salt).toString(encBase64),
     avatar : 'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png',
-    ville : obj.ville,
-    amis : [],
-    groupes : [],
-    conversations : [],
-    preferences : [{
-      cinema : true,
-      theatre: true,
-      exposition: true,
-      concert: true,
-
-      fantastique: true,
-      scienceFiction:  true,
-      comedie: true,
-      drame: true,
-      spectacleMusical: true,
-      contemporain: true,
-      oneManShow: true,
-      musiqueClassique: true,
-      musiqueFrancaise: true,
-      musiquePop: true,
-      musiqueRock: true,
-      beauxArts : true,
-      histoireCivilisations: true,
-  }],
-    confidentialite : true,
-    favoris : [],
-    sorties : []
+    confidentialite : false,
+    events : [],
   });
 
   console.log('obj to BD :', newUser);
@@ -533,24 +481,6 @@ function updateUser(userUpdated, data){
   }
   if (data.avatar != null){
     userUpdated.avatar = data.avatar;
-  }
-  if (data.ville != null){
-    userUpdated.ville = data.ville;
-  }
-  if (data.age != null){
-    userUpdated.age = data.age;
-  }
-  if (data.preferences != null){
-    userUpdated.preferences = data.preferences.toLowerCase();
-  }
-  if (data.groupes != null){
-    userUpdated.groupes = data.groupes;
-  }
-  if (data.confidentialite != null){
-    userUpdated.confidentialite = data.confidentialite;
-  }
-  if (data.favoris != null){
-    userUpdated.favoris = data.favoris;
   }
   if (data.sorties != null){
     userUpdated.sorties = data.sorties;

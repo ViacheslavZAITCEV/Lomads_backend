@@ -9,6 +9,7 @@ var userSchema = mongoose.Schema({
     salt: String,
     avatar: String,
     date_de_naissance : Date,
+    events : [{ type: mongoose.Schema.Types.ObjectId, ref: 'events' }],
     // amis: [String],
     // Format Tableau d'objets dans lequel on déclare chaque donnée et son type
     // preferences: [{
@@ -35,7 +36,6 @@ var userSchema = mongoose.Schema({
     // confidentialite: Boolean,
     // favoris: [{ type: mongoose.Schema.Types.ObjectId, ref: 'events' }],
     // CREATION DES CLEFS ETRANGERES POUR LA SUITE DU PROJET, A DECOMMENTER DES BESOIN
-    events : [{ type: mongoose.Schema.Types.ObjectId, ref: 'events' }],
     // groupes_amis:[{ type: mongoose.Schema.Types.ObjectId, ref: 'groups' }],
     // conversations:[{ type: mongoose.Schema.Types.ObjectId, ref: 'conversations' }]
 })
