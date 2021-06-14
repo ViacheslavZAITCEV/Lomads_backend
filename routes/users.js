@@ -267,40 +267,22 @@ router.get('/delete', async function(req, res, next) {
 
 
 /* -----------------  */
-/* GET users/getAvatars   */
-router.get('/getAvatars', async function(req, res, next) {
+/* GET users/getAvatar   */
+router.get('/getAvatar', async function(req, res, next) {
 
-  console.log('Route getAvatars');
-  var token = req.body.token;
-  var token = 'pDJQWG4ievDB0ANHH1X3MCGKHBXDw37G';
-  console.log('token = ', token);
+  console.log('Route getAvatar');
+  const token = req.body.token;
   
-  var response = {response : false};
-
-  var amisParisTab = await users.find({token});
-
-  var amisParis = amisParisTab.map( (user, i)=>{
-    return user._id;
-  });
+  const response = {response : false};
 
   try{
-    var resBD = await users
-      .find({ville : 'Paris'})
-      .populate('avatar')
-      .exec( (err, amis)=>{
-        if (err) {
-          console.log('error=', err);
-        }else{
-          amis = amisParis;
-          // amisParis.push(avatar);
-        }
-      })
+    var user = await users.find({token});
+    response.avatar = user.avatar
+    response.response = true
   }catch(e){
     console.log(e);
   }
-  console.log('amisParis =', amisParis);
-  console.log('resBD=', resBD);
-
+  
   res.json(response);
 });
 

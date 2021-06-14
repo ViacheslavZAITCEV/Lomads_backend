@@ -23,6 +23,8 @@ router.post('/setEvent', async (req, res, next)=>{
   let response = { response: false, error: 'init'};
   const TOKEN_USER =  req.body.token
 
+  console.log('req.body.token=', req.body.token);
+
   const NEW_EVENT = await createEvent ({
     nom: req.body.eventName,
     type: req.body.type,
